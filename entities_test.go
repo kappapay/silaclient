@@ -16,7 +16,7 @@ func TestClient_CheckHandle(t *testing.T) {
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The call to check handle should succeed", func() {
-			response, err := client.CheckHandle("user.silamoney.eth")
+			response, err := client.CheckHandle("user.silamoney.eth").Ref("My Reference").Do()
 			So(err, ShouldBeNil)
 			So(response.Success, ShouldEqual, "SUCCESS")
 		})
