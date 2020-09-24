@@ -7,6 +7,7 @@ import (
 	"math/big"
 	"sync"
 
+	"github.com/ethereum/go-ethereum/common/hexutil"
 	"github.com/ethereum/go-ethereum/crypto"
 	"github.com/pkg/errors"
 )
@@ -51,6 +52,41 @@ func NewClient(privateKeyHex string, authHandle string, environment Environment)
 		}
 	})
 	return instance, nil
+}
+
+func GetWalletAddress(privateKeyHex string) (string, error) {
+	publicKeyECDSA, err := GetPublicKeyFromPrivateHex(privateKeyHex)
+	if err != nil {
+		return "", err
+	}
+	address := crypto.PubkeyToAddress(*publicKeyECDSA).Hex()
+	return address, nil
+}
+
+func GetPublicKeyFromPrivateHex(privateKeyHex string) (*ecdsa.PublicKey, error) {
+	privateKeyBytes, err := hexutil.Decode(privateKeyHex)
+	if err != nil {
+		return nil, err
+	}
+	privateKey, err := crypto.ToECDSA(privateKeyBytes)
+	if err != nil {
+		return nil, err
+	}
+	publicKeyECDSA, ok := privateKey.Public().(*ecdsa.PublicKey)
+	if !ok {
+		return nil, errors.New("error casting public key to ECDSA")
+	}
+	return publicKeyECDSA, nil
+}
+
+func GenerateNewPrivateKey() (string, error) {
+	pk, err := crypto.GenerateKey()
+	if err != nil {
+		return "", err
+	}
+	pkBytes := crypto.FromECDSA(pk)
+	pkHex := hexutil.Encode(pkBytes)
+	return pkHex, nil
 }
 
 func (client Client) GenerateAuthSignature(requestBody []byte) string {
