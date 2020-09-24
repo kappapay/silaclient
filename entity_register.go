@@ -3,6 +3,7 @@ package sila
 import (
 	"bytes"
 	"encoding/json"
+	"github.com/pkg/errors"
 	"net/http"
 )
 
@@ -135,7 +136,11 @@ func (msg *Register) Do() (SuccessResponse, error) {
 		return responseBody, err
 	}
 	request.Header.Set("Content-type", "application/json")
-	request.Header.Set("authsignature", instance.GenerateAuthSignature(requestJson))
+	authSignature, err := instance.GenerateAuthSignature(requestJson)
+	if err != nil {
+		return responseBody, errors.Errorf("failed to generate auth signature: %v", err)
+	}
+	request.Header.Set("authsignature", authSignature)
 	httpClient := http.Client{}
 	resp, err := httpClient.Do(request)
 	if err != nil {

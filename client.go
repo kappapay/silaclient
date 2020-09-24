@@ -3,7 +3,6 @@ package sila
 import (
 	"crypto/ecdsa"
 	"encoding/hex"
-	"log"
 	"math/big"
 	"sync"
 
@@ -12,6 +11,7 @@ import (
 	"github.com/pkg/errors"
 )
 
+// The Sila client for handling calls to the Sila API
 type Client struct {
 	privateKey  *ecdsa.PrivateKey
 	authHandle  string
@@ -20,6 +20,7 @@ type Client struct {
 	environment Environment
 }
 
+// Which API environment to run in
 type Environment string
 
 const (
@@ -30,13 +31,17 @@ const (
 var once sync.Once
 
 var (
+	// A singleton instance for the client
 	instance *Client
 )
 
+// Generates a URL for the current environment given the API version and the path to invoke
 func (env Environment) generateURL(version string, path string) string {
 	return string(env) + version + path
 }
 
+// Creates a new Sila client using your system's auth private key as a hex string, your system's auth handle, and the
+// environment to send requests to (sandbox or production).
 func NewClient(privateKeyHex string, authHandle string, environment Environment) (*Client, error) {
 	privateKey, err := crypto.HexToECDSA(privateKeyHex)
 	if err != nil {
@@ -54,6 +59,7 @@ func NewClient(privateKeyHex string, authHandle string, environment Environment)
 	return instance, nil
 }
 
+// Gets a wallet address from a wallet's private key as a hex string and returns the wallet address
 func GetWalletAddress(privateKeyHex string) (string, error) {
 	publicKeyECDSA, err := GetPublicKeyFromPrivateHex(privateKeyHex)
 	if err != nil {
@@ -63,6 +69,7 @@ func GetWalletAddress(privateKeyHex string) (string, error) {
 	return address, nil
 }
 
+// Gets a public key from a private key hex string
 func GetPublicKeyFromPrivateHex(privateKeyHex string) (*ecdsa.PublicKey, error) {
 	privateKeyBytes, err := hexutil.Decode(privateKeyHex)
 	if err != nil {
@@ -79,6 +86,7 @@ func GetPublicKeyFromPrivateHex(privateKeyHex string) (*ecdsa.PublicKey, error) 
 	return publicKeyECDSA, nil
 }
 
+// Generates a new private key as a hex string for a wallet
 func GenerateNewPrivateKey() (string, error) {
 	pk, err := crypto.GenerateKey()
 	if err != nil {
@@ -89,16 +97,30 @@ func GenerateNewPrivateKey() (string, error) {
 	return pkHex, nil
 }
 
-func (client Client) GenerateAuthSignature(requestBody []byte) string {
-	// Follows the Sila example for Golang
+// Generates a signature for a request's body with one of a user's wallet private keys as provided.
+func (client Client) GenerateUserSignature(requestBody []byte, walletPrivateKeyHex string) (string, error) {
+	privateKey, err := crypto.HexToECDSA(walletPrivateKeyHex)
+	if err != nil {
+		return "", errors.Errorf("private key invalid, make sure it is hex without the 0x prefix: %v", err)
+	}
+	return generateSignatureFromKey(requestBody, privateKey)
+}
 
+// Generates a signature for a request's body with your system's private auth key from the client creation.
+func (client Client) GenerateAuthSignature(requestBody []byte) (string, error) {
+	return generateSignatureFromKey(requestBody, client.privateKey)
+}
+
+// Generates a signature for a request's body using the provided private key.
+func generateSignatureFromKey(requestBody []byte, privateKey *ecdsa.PrivateKey) (string, error) {
+	// Follows the Sila example for Golang
 	// Generate the message hash using the Keccak 256 algorithm.
 	msgHash := crypto.Keccak256(requestBody)
 
 	// Create a signature using your private key and hashed message.
-	sigBytes, err := crypto.Sign(msgHash, client.privateKey)
+	sigBytes, err := crypto.Sign(msgHash, privateKey)
 	if err != nil {
-		log.Fatal(err)
+		return "", err
 	}
 
 	// The signature just created is off by -27 from what the API
@@ -120,5 +142,5 @@ func (client Client) GenerateAuthSignature(requestBody []byte) string {
 	copy(arr[(sigBytesLength-len(sigBytes)):], sigBytes)
 
 	// Encode the bytes to a hex string.
-	return hex.EncodeToString(arr)
+	return hex.EncodeToString(arr), nil
 }

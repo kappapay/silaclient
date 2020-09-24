@@ -14,6 +14,13 @@ func (client Client) Register(userHandle string) *Register {
 	}
 }
 
+func (client Client) RequestKyc(userHandle string) *RequestKyc {
+	return &RequestKyc{
+		Header:  client.generateHeader().setUserHandle(userHandle),
+		Message: "header_msg",
+	}
+}
+
 type SuccessResponse struct {
 	Success           bool                   `json:"success"`
 	Reference         string                 `json:"reference"`
