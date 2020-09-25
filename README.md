@@ -10,9 +10,9 @@ This project aims to create a native SDK for Golang for the Sila API.
 
 * [x] [/check_handle](https://docs.silamoney.com/docs/check_handle)
 * [x] [/register](https://docs.silamoney.com/docs/register)
-* [ ] [/add/<registration-data>](https://docs.silamoney.com/docs/addregistration-data)
-* [ ] [/update/<registration-data>](https://docs.silamoney.com/docs/updateregistration-data)
-* [ ] [/delete/<registration-data>](https://docs.silamoney.com/docs/deleteregistration-data)
+* [ ] [/add/\<registration-data\>](https://docs.silamoney.com/docs/addregistration-data)
+* [ ] [/update/\<registration-data\>](https://docs.silamoney.com/docs/updateregistration-data)
+* [ ] [/delete/\<registration-data\>](https://docs.silamoney.com/docs/deleteregistration-data)
 * [ ] [/link_business_member](https://docs.silamoney.com/docs/link_business_member)
 * [ ] [/unlink_business_member](https://docs.silamoney.com/docs/unlink_business_member)
 * [x] [/request_kyc](https://docs.silamoney.com/docs/request_kyc)
@@ -24,10 +24,10 @@ This project aims to create a native SDK for Golang for the Sila API.
 
 ### Accounts
 
-* [ ] [/link_account](https://docs.silamoney.com/docs/link_account)
-* [ ] [/plaid_sameday_auth](https://docs.silamoney.com/docs/plaid_sameday_auth)
-* [ ] [/get_accounts](https://docs.silamoney.com/docs/get_accounts)
-* [ ] [/get_account_balance](https://docs.silamoney.com/docs/get_account_balance)
+* [x] [/link_account](https://docs.silamoney.com/docs/link_account)
+* [x] [/plaid_sameday_auth](https://docs.silamoney.com/docs/plaid_sameday_auth)
+* [x] [/get_accounts](https://docs.silamoney.com/docs/get_accounts)
+* [x] [/get_account_balance](https://docs.silamoney.com/docs/get_account_balance)
 
 ### Wallets
 
