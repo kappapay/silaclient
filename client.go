@@ -1,9 +1,12 @@
 package sila
 
 import (
+	"bytes"
 	"crypto/ecdsa"
 	"encoding/hex"
+	"encoding/json"
 	"math/big"
+	"net/http"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -139,4 +142,73 @@ func generateSignatureFromKey(requestBody []byte, privateKey *ecdsa.PrivateKey) 
 
 	// Encode the bytes to a hex string.
 	return hex.EncodeToString(arr), nil
+}
+
+// Perform a call to the API at some path with the included request and a pointer to the response struct
+func (client *Client) performCall(path string, requestBody interface{}, responseBody interface{}) error {
+	requestJson, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil
+	}
+	url := instance.environment.generateURL(instance.version, path)
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestJson))
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-type", "application/json")
+	authSignature, err := instance.GenerateAuthSignature(requestJson)
+	if err != nil {
+		return errors.Errorf("failed to generate auth signature: %v", err)
+	}
+	request.Header.Set("authsignature", authSignature)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	err = json.NewDecoder(resp.Body).Decode(&responseBody)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
+// Perform a call to the API at some path signed by a user's wallet private key, with the included request and a pointer to the response struct
+func (client *Client) performCallWithUserAuth(path string, requestBody interface{}, responseBody interface{}, userWalletPrivateKey string) error {
+	requestJson, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil
+	}
+	url := instance.environment.generateURL(instance.version, path)
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestJson))
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-type", "application/json")
+	authSignature, err := instance.GenerateAuthSignature(requestJson)
+	if err != nil {
+		return errors.Errorf("failed to generate auth signature: %v", err)
+	}
+	request.Header.Set("authsignature", authSignature)
+	userSignature, err := instance.GenerateUserSignature(requestJson, userWalletPrivateKey)
+	if err != nil {
+		return errors.Errorf("failed to generate user signature: %v", err)
+	}
+	request.Header.Set("usersignature", userSignature)
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	err = json.NewDecoder(resp.Body).Decode(&responseBody)
+	if err != nil {
+		return err
+	}
+	return nil
 }

@@ -1,12 +1,8 @@
 package sila
 
 import (
-	"bytes"
 	"encoding/json"
-	"net/http"
 	"time"
-
-	"github.com/pkg/errors"
 )
 
 type CheckKyc struct {
@@ -133,37 +129,6 @@ type Member struct {
 
 func (msg *CheckKyc) Do(userWalletPrivateKey string) (CheckKycResponse, error) {
 	var responseBody CheckKycResponse
-	requestJson, err := json.Marshal(msg)
-	if err != nil {
-		return responseBody, nil
-	}
-	url := instance.environment.generateURL(instance.version, "/request_kyc")
-	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestJson))
-	if err != nil {
-		return responseBody, err
-	}
-	request.Header.Set("Content-type", "application/json")
-	authSignature, err := instance.GenerateAuthSignature(requestJson)
-	if err != nil {
-		return responseBody, errors.Errorf("failed to generate auth signature: %v", err)
-	}
-	request.Header.Set("authsignature", authSignature)
-	userSignature, err := instance.GenerateUserSignature(requestJson, userWalletPrivateKey)
-	if err != nil {
-		return responseBody, errors.Errorf("failed to generate user signature: %v", err)
-	}
-	request.Header.Set("usersignature", userSignature)
-	httpClient := http.Client{}
-	resp, err := httpClient.Do(request)
-	if err != nil {
-		return responseBody, err
-	}
-
-	defer resp.Body.Close()
-
-	err = json.NewDecoder(resp.Body).Decode(&responseBody)
-	if err != nil {
-		return responseBody, err
-	}
-	return responseBody, nil
+	err := instance.performCallWithUserAuth("/check_kyc", msg, &responseBody, userWalletPrivateKey)
+	return responseBody, err
 }
