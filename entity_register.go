@@ -67,8 +67,8 @@ type CryptoEntry struct {
 	CryptoCode    string `json:"crypto_code"`
 }
 
-func (msg *Register) SetCrypto(alias string, address string) *Register {
-	msg.CryptoEntry.CryptoAlias = alias
+func (msg *Register) SetCrypto(nickname string, address string) *Register {
+	msg.CryptoEntry.CryptoAlias = nickname
 	msg.CryptoEntry.CryptoAddress = address
 	msg.CryptoEntry.CryptoCode = "ETH"
 	return msg

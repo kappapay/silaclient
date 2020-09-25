@@ -96,18 +96,18 @@ func GenerateNewPrivateKey() (string, error) {
 	return pkHex, nil
 }
 
-// Generates a signature for a request's body with one of a user's wallet private keys as provided.
-func (client Client) GenerateUserSignature(requestBody []byte, walletPrivateKeyHex string) (string, error) {
+// Generates a signature for a message with one of a user's wallet private keys (in hex) as provided.
+func GenerateWalletSignature(message []byte, walletPrivateKeyHex string) (string, error) {
 	privateKey, err := crypto.HexToECDSA(walletPrivateKeyHex)
 	if err != nil {
 		return "", errors.Errorf("private key invalid, make sure it is hex without the 0x prefix: %v", err)
 	}
-	return generateSignatureFromKey(requestBody, privateKey)
+	return generateSignatureFromKey(message, privateKey)
 }
 
-// Generates a signature for a request's body with your system's private auth key from the client creation.
-func (client Client) GenerateAuthSignature(requestBody []byte) (string, error) {
-	return generateSignatureFromKey(requestBody, client.privateKey)
+// Generates a signature for a message with your system's private auth key from the client creation.
+func (client Client) generateAuthSignature(message []byte) (string, error) {
+	return generateSignatureFromKey(message, client.privateKey)
 }
 
 // Generates a signature for a request's body using the provided private key.
@@ -156,7 +156,7 @@ func (client *Client) performCall(path string, requestBody interface{}, response
 		return err
 	}
 	request.Header.Set("Content-type", "application/json")
-	authSignature, err := instance.GenerateAuthSignature(requestJson)
+	authSignature, err := instance.generateAuthSignature(requestJson)
 	if err != nil {
 		return errors.Errorf("failed to generate auth signature: %v", err)
 	}
@@ -188,12 +188,12 @@ func (client *Client) performCallWithUserAuth(path string, requestBody interface
 		return err
 	}
 	request.Header.Set("Content-type", "application/json")
-	authSignature, err := instance.GenerateAuthSignature(requestJson)
+	authSignature, err := instance.generateAuthSignature(requestJson)
 	if err != nil {
 		return errors.Errorf("failed to generate auth signature: %v", err)
 	}
 	request.Header.Set("authsignature", authSignature)
-	userSignature, err := instance.GenerateUserSignature(requestJson, userWalletPrivateKey)
+	userSignature, err := GenerateWalletSignature(requestJson, userWalletPrivateKey)
 	if err != nil {
 		return errors.Errorf("failed to generate user signature: %v", err)
 	}
@@ -211,4 +211,12 @@ func (client *Client) performCallWithUserAuth(path string, requestBody interface
 		return err
 	}
 	return nil
+}
+
+type SuccessResponse struct {
+	Success           bool                   `json:"success"`
+	Reference         string                 `json:"reference"`
+	Message           string                 `json:"message"`
+	Status            string                 `json:"status"`
+	ValidationDetails map[string]interface{} `json:"validation_details"`
 }
