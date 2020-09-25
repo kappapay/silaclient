@@ -12,7 +12,7 @@ import (
 type CheckKyc struct {
 	Header   *Header `json:"header"`
 	Message  string  `json:"message"`
-	KycLevel string  `json:"kyc_level"`
+	KycLevel string  `json:"kyc_level,omitempty"`
 }
 
 func (msg *CheckKyc) SetRef(ref string) *CheckKyc {

@@ -71,11 +71,7 @@ func GetWalletAddress(privateKeyHex string) (string, error) {
 
 // Gets a public key from a private key hex string
 func GetPublicKeyFromPrivateHex(privateKeyHex string) (*ecdsa.PublicKey, error) {
-	privateKeyBytes, err := hexutil.Decode(privateKeyHex)
-	if err != nil {
-		return nil, err
-	}
-	privateKey, err := crypto.ToECDSA(privateKeyBytes)
+	privateKey, err := crypto.HexToECDSA(privateKeyHex)
 	if err != nil {
 		return nil, err
 	}
@@ -93,7 +89,7 @@ func GenerateNewPrivateKey() (string, error) {
 		return "", err
 	}
 	pkBytes := crypto.FromECDSA(pk)
-	pkHex := hexutil.Encode(pkBytes)
+	pkHex := hexutil.Encode(pkBytes)[2:]
 	return pkHex, nil
 }
 

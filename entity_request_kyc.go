@@ -11,7 +11,7 @@ import (
 type RequestKyc struct {
 	Header   *Header `json:"header"`
 	Message  string  `json:"message"`
-	KycLevel string  `json:"kyc_level"`
+	KycLevel string  `json:"kyc_level,omitempty"`
 }
 
 func (msg *RequestKyc) SetRef(ref string) *RequestKyc {
