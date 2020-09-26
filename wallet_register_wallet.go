@@ -10,6 +10,8 @@ type Wallet struct {
 	BlockchainAddress string `json:"blockchain_address"`
 	BlockchainNetwork string `json:"blockchain_network"`
 	Nickname          string `json:"nickname"`
+	Default           bool   `json:"default,omitempty"`
+	Frozen            bool   `json:"frozen"`
 }
 
 func (msg *RegisterWallet) SetRef(ref string) *RegisterWallet {
