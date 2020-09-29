@@ -213,6 +213,33 @@ func (client *Client) performCallWithUserAuth(path string, requestBody interface
 	return nil
 }
 
+// Perform a public (no auth required) call to the API at some path with the included request and a pointer to the response struct
+func (client *Client) performPublicCall(path string, requestBody interface{}, responseBody interface{}) error {
+	requestJson, err := json.Marshal(requestBody)
+	if err != nil {
+		return nil
+	}
+	url := instance.environment.generateURL(instance.version, path)
+	request, err := http.NewRequest(http.MethodPost, url, bytes.NewBuffer(requestJson))
+	if err != nil {
+		return err
+	}
+	request.Header.Set("Content-type", "application/json")
+	httpClient := http.Client{}
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	err = json.NewDecoder(resp.Body).Decode(&responseBody)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 type SuccessResponse struct {
 	Success           bool                   `json:"success"`
 	Reference         string                 `json:"reference"`

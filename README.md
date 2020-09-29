@@ -34,9 +34,9 @@ This project aims to create a native SDK for Golang for the Sila API.
 * [x] [/register_wallet](https://docs.silamoney.com/docs/register_wallet)
 * [x] [/get_wallet](https://docs.silamoney.com/docs/get_wallet)
 * [x] [/get_wallets](https://docs.silamoney.com/docs/get_wallets)
-* [ ] [/update_wallet](https://docs.silamoney.com/docs/update_wallet)
-* [ ] [/get_sila_balance](https://docs.silamoney.com/docs/get_sila_balance)
-* [ ] [/delete_wallet](https://docs.silamoney.com/docs/delete_wallet)
+* [x] [/update_wallet](https://docs.silamoney.com/docs/update_wallet)
+* [x] [/get_sila_balance](https://docs.silamoney.com/docs/get_sila_balance)
+* [x] [/delete_wallet](https://docs.silamoney.com/docs/delete_wallet)
 
 ### Transactions
 
