@@ -48,6 +48,6 @@ This project aims to create a native SDK for Golang for the Sila API.
 
 ### Parameters
 
-* [ ] [/get_business_types](https://docs.silamoney.com/docs/get_business_types)
-* [ ] [/get_business_roles](https://docs.silamoney.com/docs/get_business_roles)
-* [ ] [/get_naics_categories](https://docs.silamoney.com/docs/get_naics_categories)
+* [x] [/get_business_types](https://docs.silamoney.com/docs/get_business_types)
+* [x] [/get_business_roles](https://docs.silamoney.com/docs/get_business_roles)
+* [x] [/get_naics_categories](https://docs.silamoney.com/docs/get_naics_categories)
