@@ -73,7 +73,7 @@ func TestClient_GetWallets(t *testing.T) {
 			Convey("The call to get wallets should succeed", func() {
 				response, err := client.GetWallets("user.silamoney.eth").
 					SetRef("My Reference").
-					SetSearchFilters(sila.SearchFilters{
+					SetSearchFilters(sila.WalletSearchFilters{
 						Page:          1,
 						PerPage:       5,
 						SortAscending: true,

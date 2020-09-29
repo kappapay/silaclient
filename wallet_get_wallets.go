@@ -1,11 +1,11 @@
 package sila
 
 type GetWallets struct {
-	Header        *Header       `json:"header"`
-	SearchFilters SearchFilters `json:"search_filters,omitempty"`
+	Header        *Header             `json:"header"`
+	SearchFilters WalletSearchFilters `json:"search_filters,omitempty"`
 }
 
-type SearchFilters struct {
+type WalletSearchFilters struct {
 	Page              int32  `json:"page,omitempty"`
 	PerPage           int32  `json:"per_page,omitempty"`
 	SortAscending     bool   `json:"sort_ascending,omitempty"`
@@ -19,7 +19,7 @@ func (msg *GetWallets) SetRef(ref string) *GetWallets {
 	return msg
 }
 
-func (msg *GetWallets) SetSearchFilters(filters SearchFilters) *GetWallets {
+func (msg *GetWallets) SetSearchFilters(filters WalletSearchFilters) *GetWallets {
 	msg.SearchFilters = filters
 	return msg
 }

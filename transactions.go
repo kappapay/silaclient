@@ -20,3 +20,17 @@ func (client Client) RedeemSila(userHandle string) *RedeemSila {
 		Message: "redeem_msg",
 	}
 }
+
+func (client Client) GetTransactions(userHandle string) *GetTransactions {
+	return &GetTransactions{
+		Header:  client.generateHeader().setUserHandle(userHandle),
+		Message: "get_transactions_msg",
+	}
+}
+
+func (client Client) CancelTransaction(userHandle string, transactionId string) *CancelTransactions {
+	return &CancelTransactions{
+		Header:        client.generateHeader().setUserHandle(userHandle),
+		TransactionId: transactionId,
+	}
+}
