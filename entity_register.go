@@ -1,13 +1,13 @@
 package sila
 
 type Register struct {
-	Header      *Header     `json:"header"`
-	Message     string      `json:"message"`
-	Address     Address     `json:"address,omitempty"`
-	Identity    Identity    `json:"identity,omitempty"`
-	Contact     Contact     `json:"contact,omitempty"`
-	CryptoEntry CryptoEntry `json:"crypto_entry"`
-	Entity      Entity      `json:"entity"`
+	Header      *Header              `json:"header"`
+	Message     string               `json:"message"`
+	Address     RegistrationAddress  `json:"address,omitempty"`
+	Identity    RegistrationIdentity `json:"identity,omitempty"`
+	Contact     Contact              `json:"contact,omitempty"`
+	CryptoEntry CryptoEntry          `json:"crypto_entry"`
+	Entity      RegistrationEntity   `json:"entity"`
 }
 
 func (msg *Register) SetRef(ref string) *Register {
@@ -15,7 +15,7 @@ func (msg *Register) SetRef(ref string) *Register {
 	return msg
 }
 
-type Address struct {
+type RegistrationAddress struct {
 	AddressAlias   string `json:"address_alias,omitempty"`
 	StreetAddress1 string `json:"street_address_1,omitempty"`
 	StreetAddress2 string `json:"street_address_2,omitempty"`
@@ -25,7 +25,7 @@ type Address struct {
 	PostalCode     string `json:"postal_code,omitempty"`
 }
 
-func (msg *Register) SetAddress(address Address) *Register {
+func (msg *Register) SetAddress(address RegistrationAddress) *Register {
 	msg.Address = address
 	return msg
 }
@@ -33,11 +33,11 @@ func (msg *Register) SetAddress(address Address) *Register {
 type IdentityType string
 
 const (
-	SsnIdentity IdentityType = "SSN"
-	EinIdentity              = "EIN"
+	Ssn IdentityType = "SSN"
+	Ein              = "EIN"
 )
 
-type Identity struct {
+type RegistrationIdentity struct {
 	IdentityAlias IdentityType `json:"identity_alias"`
 	IdentityValue string       `json:"identity_value"`
 }
@@ -77,11 +77,11 @@ func (msg *Register) SetCrypto(nickname string, address string) *Register {
 type EntityType string
 
 const (
-	IndividualEntity EntityType = "individual"
-	BusinessEntity              = "business"
+	Individual EntityType = "individual"
+	Business              = "business"
 )
 
-type Entity struct {
+type RegistrationEntity struct {
 	Type            EntityType `json:"type"`
 	BirthDate       string     `json:"birthdate,omitempty"`
 	FirstName       string     `json:"first_name,omitempty"`
@@ -94,7 +94,7 @@ type Entity struct {
 }
 
 func (msg *Register) SetIndividualEntity(firstName string, lastName string, birthDate string) *Register {
-	msg.Entity.Type = IndividualEntity
+	msg.Entity.Type = Individual
 	msg.Entity.FirstName = firstName
 	msg.Entity.LastName = lastName
 	msg.Entity.BirthDate = birthDate
@@ -102,7 +102,7 @@ func (msg *Register) SetIndividualEntity(firstName string, lastName string, birt
 }
 
 func (msg *Register) SetBusinessEntity(entityName string, businessType string, naicsCode int) *Register {
-	msg.Entity.Type = BusinessEntity
+	msg.Entity.Type = Business
 	msg.Entity.EntityName = entityName
 	msg.Entity.BusinessType = businessType
 	msg.Entity.NaicsCode = naicsCode

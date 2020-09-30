@@ -105,7 +105,7 @@ type Transaction struct {
 	Timeline           []TransactionTimePoint `json:"timeline"`
 }
 
-func (ch *Transaction) UnmarshalJSON(data []byte) error {
+func (t *Transaction) UnmarshalJSON(data []byte) error {
 	var raw map[string]interface{}
 	err := json.Unmarshal(data, &raw)
 	if err != nil {
@@ -114,49 +114,49 @@ func (ch *Transaction) UnmarshalJSON(data []byte) error {
 	for key, value := range raw {
 		switch key {
 		case "user_handle":
-			ch.UserHandle = value.(string)
+			t.UserHandle = value.(string)
 		case "reference_id":
-			ch.ReferenceId = value.(string)
+			t.ReferenceId = value.(string)
 		case "transaction_id":
-			ch.TransactionId = value.(string)
+			t.TransactionId = value.(string)
 		case "transaction_hash":
-			ch.TransactionHash = value.(string)
+			t.TransactionHash = value.(string)
 		case "transaction_type":
-			ch.TransactionType = value.(string)
+			t.TransactionType = value.(string)
 		case "sila_amount":
-			ch.SilaAmount = value.(int64)
+			t.SilaAmount = value.(int64)
 		case "bank_account_name":
-			ch.BankAccountName = value.(string)
+			t.BankAccountName = value.(string)
 		case "status":
-			ch.Status = value.(string)
+			t.Status = value.(string)
 		case "usd_status":
-			ch.UsdStatus = value.(string)
+			t.UsdStatus = value.(string)
 		case "token_status":
-			ch.TokenStatus = value.(string)
+			t.TokenStatus = value.(string)
 		case "created":
-			ch.Created = value.(string)
+			t.Created = value.(string)
 		case "created_epoch":
-			ch.CreatedTime = time.Unix(int64(value.(float64)), 0)
+			t.CreatedTime = time.Unix(int64(value.(float64)), 0)
 		case "last_update":
-			ch.LastUpdate = value.(string)
+			t.LastUpdate = value.(string)
 		case "last_update_epoch":
-			ch.LastUpdateTime = time.Unix(int64(value.(float64)), 0)
+			t.LastUpdateTime = time.Unix(int64(value.(float64)), 0)
 		case "descriptor":
-			ch.Descriptor = value.(string)
+			t.Descriptor = value.(string)
 		case "descriptor_ach":
-			ch.DescriptorAch = value.(string)
+			t.DescriptorAch = value.(string)
 		case "ach_name":
-			ch.AchName = value.(string)
+			t.AchName = value.(string)
 		case "processing_type":
-			ch.ProcessingType = value.(string)
+			t.ProcessingType = value.(string)
 		case "destination_address":
-			ch.DestinationAddress = value.(string)
+			t.DestinationAddress = value.(string)
 		case "destination_handle":
-			ch.DestinationHandle = value.(string)
+			t.DestinationHandle = value.(string)
 		case "handle_address":
-			ch.HandleAddress = value.(string)
+			t.HandleAddress = value.(string)
 		case "timeline":
-			ch.Timeline = value.([]TransactionTimePoint)
+			t.Timeline = value.([]TransactionTimePoint)
 		}
 
 	}
@@ -171,7 +171,7 @@ type TransactionTimePoint struct {
 	TokenStatus string    `json:"token_status"`
 }
 
-func (ch *TransactionTimePoint) UnmarshalJSON(data []byte) error {
+func (ttp *TransactionTimePoint) UnmarshalJSON(data []byte) error {
 	var raw map[string]interface{}
 	err := json.Unmarshal(data, &raw)
 	if err != nil {
@@ -180,15 +180,15 @@ func (ch *TransactionTimePoint) UnmarshalJSON(data []byte) error {
 	for key, value := range raw {
 		switch key {
 		case "date":
-			ch.Date = value.(string)
+			ttp.Date = value.(string)
 		case "date_epoch":
-			ch.DateTime = time.Unix(int64(value.(float64)), 0)
+			ttp.DateTime = time.Unix(int64(value.(float64)), 0)
 		case "status":
-			ch.Status = value.(string)
+			ttp.Status = value.(string)
 		case "usd_status":
-			ch.UsdStatus = value.(string)
+			ttp.UsdStatus = value.(string)
 		case "token_status":
-			ch.TokenStatus = value.(string)
+			ttp.TokenStatus = value.(string)
 		}
 	}
 	return nil

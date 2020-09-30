@@ -19,8 +19,8 @@ This project aims to create a native SDK for Golang for the Sila API.
 * [x] [/check_kyc](https://docs.silamoney.com/docs/check_kyc)
 * [ ] [/certify_beneficial_owner](https://docs.silamoney.com/docs/certify_beneficial_owner)
 * [ ] [/certify_business](https://docs.silamoney.com/docs/certify_business)
-* [ ] [/get_entities](https://docs.silamoney.com/docs/get_entities)
-* [ ] [/get_entity](https://docs.silamoney.com/docs/get_entity)
+* [x] [/get_entities](https://docs.silamoney.com/docs/get_entities)
+* [x] [/get_entity](https://docs.silamoney.com/docs/get_entity)
 
 ### Accounts
 
