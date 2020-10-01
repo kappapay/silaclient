@@ -9,12 +9,12 @@ import (
 	"sila"
 )
 
-func TestClient_EntityRegistration(t *testing.T) {
+func TestClient_IndividualEntityRegistration(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)

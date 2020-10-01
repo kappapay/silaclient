@@ -13,7 +13,7 @@ func TestClient_Parameters(t *testing.T) {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)

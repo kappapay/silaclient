@@ -14,7 +14,7 @@ func TestClient_IssueSila(t *testing.T) {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
@@ -43,7 +43,7 @@ func TestClient_TransferSila(t *testing.T) {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
@@ -71,7 +71,7 @@ func TestClient_RedeemSila(t *testing.T) {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
@@ -100,7 +100,7 @@ func TestClient_GetTransactions(t *testing.T) {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
@@ -137,7 +137,7 @@ func TestClient_CancelTransaction(t *testing.T) {
 		testConfig, err := ReadTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			testConfig.PrivateKeyKex,
+			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)

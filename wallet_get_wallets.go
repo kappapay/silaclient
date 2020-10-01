@@ -14,11 +14,6 @@ type WalletSearchFilters struct {
 	Nickname          string `json:"nickname,omitempty"`
 }
 
-func (msg *GetWallets) SetRef(ref string) *GetWallets {
-	msg.Header.setRef(ref)
-	return msg
-}
-
 func (msg *GetWallets) SetSearchFilters(filters WalletSearchFilters) *GetWallets {
 	msg.SearchFilters = filters
 	return msg
@@ -26,7 +21,6 @@ func (msg *GetWallets) SetSearchFilters(filters WalletSearchFilters) *GetWallets
 
 type GetWalletsResponse struct {
 	Success           bool                   `json:"success"`
-	Reference         string                 `json:"reference"`
 	Message           string                 `json:"message"`
 	Status            string                 `json:"status"`
 	ValidationDetails map[string]interface{} `json:"validation_details"`

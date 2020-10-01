@@ -3,8 +3,10 @@ package sila_test
 import "github.com/spf13/viper"
 
 type TestConfigData struct {
-	PrivateKeyKex string
-	AuthHandle    string
+	AuthPrivateKeyKex       string
+	AuthHandle              string
+	UserHandle              string
+	UserWalletPrivateKeyHex string
 }
 
 func ReadTestConfig() (TestConfigData, error) {
@@ -17,7 +19,9 @@ func ReadTestConfig() (TestConfigData, error) {
 	if err != nil {
 		return testConfigData, err
 	}
-	testConfigData.PrivateKeyKex = config.GetString("private_key_hex")
-	testConfigData.AuthHandle = config.GetString("auth_handle")
+	testConfigData.AuthPrivateKeyKex = config.GetString("auth.private_key_hex")
+	testConfigData.AuthHandle = config.GetString("auth.handle")
+	testConfigData.UserHandle = config.GetString("user.handle")
+	testConfigData.UserWalletPrivateKeyHex = config.GetString("user.wallet_private_key_hex")
 	return testConfigData, nil
 }

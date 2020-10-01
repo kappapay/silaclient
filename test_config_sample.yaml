@@ -1,2 +1,4 @@
 private_key_hex: "badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c"
 auth_handle: "handle.silamoney.eth"
+user_handle: "user.silamoney.eth"
+user_wallet_private_key_hex: "fbebf226629f9642b37f501aa1930a7b0ad1e3368571ce18cae94cf284278d6c"
