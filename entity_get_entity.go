@@ -9,14 +9,8 @@ type GetEntity struct {
 	Header *Header `json:"header"`
 }
 
-func (msg *GetEntity) SetRef(ref string) *GetEntity {
-	msg.Header.setRef(ref)
-	return msg
-}
-
 type GetEntityResponse struct {
 	Success           bool                   `json:"success"`
-	Reference         string                 `json:"reference"`
 	Message           string                 `json:"message"`
 	Status            string                 `json:"status"`
 	ValidationDetails map[string]interface{} `json:"validation_details"`
@@ -130,7 +124,7 @@ func (ei *EntityIdentity) UnmarshalJSON(data []byte) error {
 		case "uuid":
 			ei.Uuid = value.(string)
 		case "identity_type":
-			ei.IdentityType = value.(IdentityType)
+			ei.IdentityType = GetIdentityType(value.(string))
 		case "identity":
 			ei.Identity = value.(string)
 		}

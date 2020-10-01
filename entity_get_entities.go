@@ -62,13 +62,20 @@ func (ie *IndividualEntity) UnmarshalJSON(data []byte) error {
 		case "handle":
 			ie.Handle = value.(string)
 		case "full_name":
-			ie.FullName = value.(string)
+			if value != nil {
+				ie.FullName = value.(string)
+			}
 		case "created":
 			ie.Created = time.Unix(int64(value.(float64)), 0)
 		case "status":
 			ie.Status = value.(string)
 		case "blockchain_addresses":
-			ie.BlockchainAddresses = value.([]string)
+			arrValue := value.([]interface{})
+			convertedValue := make([]string, len(arrValue))
+			for index, rawValue := range arrValue {
+				convertedValue[index] = rawValue.(string)
+			}
+			ie.BlockchainAddresses = convertedValue
 		}
 	}
 	return nil
@@ -102,7 +109,12 @@ func (be *BusinessEntity) UnmarshalJSON(data []byte) error {
 		case "status":
 			be.Status = value.(string)
 		case "blockchain_addresses":
-			be.BlockchainAddresses = value.([]string)
+			arrValue := value.([]interface{})
+			convertedValue := make([]string, len(arrValue))
+			for index, rawValue := range arrValue {
+				convertedValue[index] = rawValue.(string)
+			}
+			be.BlockchainAddresses = convertedValue
 		case "uuid":
 			be.Uuid = value.(string)
 		case "business_type":

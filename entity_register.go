@@ -33,9 +33,21 @@ func (msg *Register) SetAddress(address RegistrationAddress) *Register {
 type IdentityType string
 
 const (
-	Ssn IdentityType = "SSN"
-	Ein              = "EIN"
+	Unknown IdentityType = "UNKNOWN"
+	Ssn                  = "SSN"
+	Ein                  = "EIN"
 )
+
+func GetIdentityType(identityType string) IdentityType {
+	switch identityType {
+	case Ssn:
+		return Ssn
+	case Ein:
+		return Ein
+	default:
+		return Unknown
+	}
+}
 
 type RegistrationIdentity struct {
 	IdentityAlias IdentityType `json:"identity_alias"`

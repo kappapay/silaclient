@@ -67,13 +67,31 @@ func (vh *VerificationHistory) UnmarshalJSON(data []byte) error {
 		case "updated_at":
 			vh.UpdatedAt = time.Unix(int64(value.(float64)), 0)
 		case "reasons":
-			vh.Reasons = value.([]string)
+			arrValue := value.([]interface{})
+			convertedValue := make([]string, len(arrValue))
+			for index, rawValue := range arrValue {
+				convertedValue[index] = rawValue.(string)
+			}
+			vh.Reasons = convertedValue
 		case "tags":
-			vh.Tags = value.([]string)
+			arrValue := value.([]interface{})
+			convertedValue := make([]string, len(arrValue))
+			for index, rawValue := range arrValue {
+				convertedValue[index] = rawValue.(string)
+			}
+			vh.Tags = convertedValue
 		case "score":
-			vh.Score = value.(float64)
+			if value != nil {
+				vh.Score = value.(float64)
+			}
 		case "valid_kyc_levels":
-			vh.ValidKycLevels = value.([]string)
+
+			arrValue := value.([]interface{})
+			convertedValue := make([]string, len(arrValue))
+			for index, rawValue := range arrValue {
+				convertedValue[index] = rawValue.(string)
+			}
+			vh.ValidKycLevels = convertedValue
 		}
 	}
 	return nil
@@ -107,7 +125,12 @@ func (ch *CertificationHistory) UnmarshalJSON(data []byte) error {
 		case "expires_after_epoch":
 			ch.ExpiresAfterTime = time.Unix(int64(value.(float64)), 0)
 		case "beneficial_owner_certifications":
-			ch.BeneficialOwnerCertifications = value.([]string)
+			arrValue := value.([]interface{})
+			convertedValue := make([]string, len(arrValue))
+			for index, rawValue := range arrValue {
+				convertedValue[index] = rawValue.(string)
+			}
+			ch.BeneficialOwnerCertifications = convertedValue
 		}
 	}
 	return nil
