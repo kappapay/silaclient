@@ -6,7 +6,7 @@ type GetAccounts struct {
 }
 
 type GetAccountsResponse struct {
-	Accounts []Account
+	Accounts []Account `json:"accounts"`
 }
 
 type Account struct {

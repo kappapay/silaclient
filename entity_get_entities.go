@@ -14,11 +14,6 @@ type GetEntities struct {
 	PerPage    int32   `json:"-"`
 }
 
-func (msg *GetEntities) SetRef(ref string) *GetEntities {
-	msg.Header.setRef(ref)
-	return msg
-}
-
 func (msg *GetEntities) SetEntityType(entityType string) *GetEntities {
 	msg.EntityType = entityType
 	return msg
@@ -36,7 +31,6 @@ func (msg *GetEntities) SetPerPage(perPage int32) *GetEntities {
 
 type GetEntitiesResponse struct {
 	Success           bool                   `json:"success"`
-	Reference         string                 `json:"reference"`
 	Message           string                 `json:"message"`
 	Status            string                 `json:"status"`
 	ValidationDetails map[string]interface{} `json:"validation_details"`

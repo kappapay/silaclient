@@ -10,7 +10,7 @@ type GetSilaBalanceResponse struct {
 	Status            string                 `json:"status"`
 	ValidationDetails map[string]interface{} `json:"validation_details"`
 	Address           string                 `json:"address"`
-	SilaBalance       int64                  `json:"sila_balance"`
+	SilaBalance       float64                `json:"sila_balance"`
 }
 
 func (msg *GetSilaBalance) Do() (GetSilaBalanceResponse, error) {

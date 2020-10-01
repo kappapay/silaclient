@@ -18,9 +18,14 @@ func TestClient_CheckHandle(t *testing.T) {
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The call to check handle should succeed", func() {
-			response, err := client.CheckHandle("user.silamoney.eth").SetRef("My Reference").Do()
+			response, err := client.CheckHandle("ce6ce827-109b-4815-b31a-9af2c3cba031").
+				SetRef("My Reference").
+				Do()
 			So(err, ShouldBeNil)
-			So(response.Success, ShouldEqual, "SUCCESS")
+			So(response.Success, ShouldBeTrue)
+			So(response.Reference, ShouldEqual, "My Reference")
+			So(response.Status, ShouldEqual, "SUCCESS")
+			So(response.ValidationDetails, ShouldBeNil)
 		})
 	})
 }
@@ -40,7 +45,7 @@ func TestClient_Register(t *testing.T) {
 			address, err := sila.GetWalletAddress(privateKey)
 			So(err, ShouldBeNil)
 			Convey("The call to register should succeed", func() {
-				response, err := client.Register("user.silamoney.eth").
+				response, err := client.Register("dcd3330d.pastel.dev").
 					SetRef("My Reference").
 					SetIndividualEntity("Alberta", "Bobbeth", "1950-10-31").
 					SetAddress(sila.RegistrationAddress{
@@ -56,7 +61,10 @@ func TestClient_Register(t *testing.T) {
 					SetCrypto("Main Address", address).
 					Do()
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -76,11 +84,14 @@ func TestClient_RequestKyc(t *testing.T) {
 			privateKey, err := sila.GenerateNewPrivateKey()
 			So(err, ShouldBeNil)
 			Convey("The call to request KYC should succeed", func() {
-				response, err := client.RequestKyc("user.silamoney.eth").
+				response, err := client.RequestKyc("dcd3330d.pastel.dev").
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -99,11 +110,14 @@ func TestClient_CheckKyc(t *testing.T) {
 			privateKey, err := sila.GenerateNewPrivateKey()
 			So(err, ShouldBeNil)
 			Convey("The call to check KYC should succeed", func() {
-				response, err := client.CheckKyc("user.silamoney.eth").
+				response, err := client.CheckKyc("dcd3330d.pastel.dev").
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -122,11 +136,14 @@ func TestClient_GetEntity(t *testing.T) {
 			privateKey, err := sila.GenerateNewPrivateKey()
 			So(err, ShouldBeNil)
 			Convey("The call to get an entity should succeed", func() {
-				response, err := client.GetEntity("user.silamoney.eth").
+				response, err := client.GetEntity("dcd3330d.pastel.dev").
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -145,10 +162,11 @@ func TestClient_GetEntities(t *testing.T) {
 			response, err := client.GetEntities().
 				SetPage(1).
 				SetPerPage(20).
-				SetRef("My Reference").
 				Do()
 			So(err, ShouldBeNil)
-			So(response.Success, ShouldEqual, "SUCCESS")
+			So(response.Success, ShouldBeTrue)
+			So(response.Status, ShouldEqual, "SUCCESS")
+			So(response.ValidationDetails, ShouldBeNil)
 		})
 	})
 }

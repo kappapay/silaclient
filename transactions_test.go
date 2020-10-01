@@ -29,7 +29,10 @@ func TestClient_IssueSila(t *testing.T) {
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -54,7 +57,10 @@ func TestClient_TransferSila(t *testing.T) {
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -80,7 +86,10 @@ func TestClient_RedeemSila(t *testing.T) {
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -114,7 +123,10 @@ func TestClient_GetTransactions(t *testing.T) {
 					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(response.Success, ShouldEqual, "SUCCESS")
+				So(response.Success, ShouldBeTrue)
+				So(response.Status, ShouldEqual, "SUCCESS")
+				So(response.ValidationDetails, ShouldBeNil)
+				So(response.Reference, ShouldEqual, "My Reference")
 			})
 		})
 	})
@@ -137,17 +149,19 @@ func TestClient_CancelTransaction(t *testing.T) {
 					SetAmountToAccount(10000, "default").
 					SetDescriptor("RentUnit#7").
 					SetProcessingType("STANDARD_ACH").
-					SetRef("My Reference").
 					Do(privateKey)
 				So(err, ShouldBeNil)
-				So(transactionResponse.Success, ShouldEqual, "SUCCESS")
+				So(transactionResponse.Success, ShouldBeTrue)
 
 				Convey("The call to cancel a transaction should succeed", func() {
 					response, err := client.CancelTransaction("user.silamoney.eth", transactionResponse.TransactionId).
 						SetRef("My Reference").
 						Do(privateKey)
 					So(err, ShouldBeNil)
-					So(response.Success, ShouldEqual, "SUCCESS")
+					So(response.Success, ShouldBeTrue)
+					So(response.Status, ShouldEqual, "SUCCESS")
+					So(response.ValidationDetails, ShouldBeNil)
+					So(response.Reference, ShouldEqual, "My Reference")
 				})
 			})
 		})
