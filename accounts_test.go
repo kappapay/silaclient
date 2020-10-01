@@ -10,9 +10,11 @@ import (
 
 func TestClient_LinkAccount(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The user private key and address are generated", func() {
@@ -36,9 +38,11 @@ func TestClient_LinkAccount(t *testing.T) {
 
 func TestClient_PlaidSameDayAuth(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The call to plaid same day auth should succeed", func() {
@@ -51,9 +55,11 @@ func TestClient_PlaidSameDayAuth(t *testing.T) {
 
 func TestClient_GetAccounts(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The user private key and address are generated", func() {
@@ -73,9 +79,11 @@ func TestClient_GetAccounts(t *testing.T) {
 
 func TestClient_GetAccountBalance(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The user private key and address are generated", func() {

@@ -16,7 +16,7 @@ type BusinessType struct {
 	Uuid                  string `json:"uuid"`
 	Name                  string `json:"name"`
 	Label                 string `json:"label"`
-	RequiresCertification string `json:"requires_certification"`
+	RequiresCertification bool   `json:"requires_certification"`
 }
 
 func (msg *GetBusinessTypes) Do() (GetBusinessTypesResponse, error) {

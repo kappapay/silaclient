@@ -11,9 +11,11 @@ import (
 
 func TestClient_IssueSila(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The 'existing' wallet private key and address are generated", func() {
@@ -35,9 +37,11 @@ func TestClient_IssueSila(t *testing.T) {
 
 func TestClient_TransferSila(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The 'existing' wallet private key and address are generated", func() {
@@ -58,9 +62,11 @@ func TestClient_TransferSila(t *testing.T) {
 
 func TestClient_RedeemSila(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The 'existing' wallet private key and address are generated", func() {
@@ -82,9 +88,11 @@ func TestClient_RedeemSila(t *testing.T) {
 
 func TestClient_GetTransactions(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The 'existing' wallet private key and address are generated", func() {
@@ -114,9 +122,11 @@ func TestClient_GetTransactions(t *testing.T) {
 
 func TestClient_CancelTransaction(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The 'existing' wallet private key and address are generated", func() {

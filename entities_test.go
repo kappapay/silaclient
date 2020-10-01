@@ -8,13 +8,13 @@ import (
 	"sila"
 )
 
-// TODO: These are currently integration tests, and ones that break at that (the auth private key is totally nonsense)
-
 func TestClient_CheckHandle(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The call to check handle should succeed", func() {
@@ -27,9 +27,11 @@ func TestClient_CheckHandle(t *testing.T) {
 
 func TestClient_Register(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The user private key and address are generated", func() {
@@ -62,9 +64,11 @@ func TestClient_Register(t *testing.T) {
 
 func TestClient_RequestKyc(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 
@@ -84,9 +88,11 @@ func TestClient_RequestKyc(t *testing.T) {
 
 func TestClient_CheckKyc(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The user private key and address are generated", func() {
@@ -105,9 +111,11 @@ func TestClient_CheckKyc(t *testing.T) {
 
 func TestClient_GetEntity(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The user private key and address are generated", func() {
@@ -126,9 +134,11 @@ func TestClient_GetEntity(t *testing.T) {
 
 func TestClient_GetEntities(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
+		testConfig, err := ReadTestConfig()
+		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
-			"badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c",
-			"handle.silamoney.eth",
+			testConfig.PrivateKeyKex,
+			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("The call to get entities should succeed", func() {
