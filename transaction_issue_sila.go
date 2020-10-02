@@ -15,7 +15,8 @@ func (msg *IssueSila) SetRef(ref string) *IssueSila {
 	return msg
 }
 
-func (msg *IssueSila) SetAmountToAccount(amount int64, accountName string) *IssueSila {
+// Sets the amount to take from the named linked account and put into the Sila wallet
+func (msg *IssueSila) SetAmountFromAccount(amount int64, accountName string) *IssueSila {
 	msg.Amount = amount
 	msg.AccountName = accountName
 	return msg

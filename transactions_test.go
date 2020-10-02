@@ -1,167 +1,201 @@
 package sila_test
 
 import (
+	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 	"time"
-
-	. "github.com/smartystreets/goconvey/convey"
 
 	"sila"
 )
 
-func TestClient_IssueSila(t *testing.T) {
+func TestClient_Transactions(t *testing.T) {
+	transactionSleepTime := 3*time.Minute + 30*time.Second
 	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
+		testConfig, err := readTestConfig()
+		So(err, ShouldBeNil)
+		userHandle := testConfig.UserHandle
+		userWalletPrivateKey := testConfig.UserWalletPrivateKeyHex
+		userWalletAddress, err := sila.GetWalletAddress(userWalletPrivateKey)
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
 			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
-		Convey("The 'existing' wallet private key and address are generated", func() {
-			privateKey, err := sila.GenerateNewPrivateKey()
-			So(err, ShouldBeNil)
-			Convey("The call to issue Sila coin to a wallet should succeed", func() {
-				response, err := client.IssueSila("user.silamoney.eth").
-					SetAmountToAccount(10000, "default").
-					SetDescriptor("RentUnit#7").
+		Convey("And the specified integration user exists and has passed KYC", func() {
+			ensureIntegrationUserExistsWithLinkedAccount(client, userHandle, userWalletAddress, userWalletPrivateKey)
+
+			Convey("A call to issue Sila coin to the main wallet should succeed", func() {
+				response, err := client.IssueSila(userHandle).
+					SetAmountFromAccount(100, "default").
+					SetDescriptor("DepositForCancel").
 					SetProcessingType("STANDARD_ACH").
 					SetRef("My Reference").
-					Do(privateKey)
+					Do(userWalletPrivateKey)
 				So(err, ShouldBeNil)
 				So(response.Success, ShouldBeTrue)
 				So(response.Status, ShouldEqual, "SUCCESS")
 				So(response.ValidationDetails, ShouldBeNil)
 				So(response.Reference, ShouldEqual, "My Reference")
-			})
-		})
-	})
-}
+				So(response.Message, ShouldEqual, "Transaction submitted to processing queue.")
+				So(response.TransactionId, ShouldNotBeZeroValue)
+				So(response.Descriptor, ShouldEqual, "DepositForCancel")
+				transactionId := response.TransactionId
 
-func TestClient_TransferSila(t *testing.T) {
-	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
-		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
-			testConfig.AuthPrivateKeyKex,
-			testConfig.AuthHandle,
-			sila.Sandbox)
-		So(err, ShouldBeNil)
-		Convey("The 'existing' wallet private key and address are generated", func() {
-			privateKey, err := sila.GenerateNewPrivateKey()
-			So(err, ShouldBeNil)
-			Convey("The call to transfer Sila coin from one wallet to another should succeed", func() {
-				response, err := client.TransferSila("user.silamoney.eth").
-					SetAmountAndUser(10000, "user2.silamoney.eth").
-					SetDescriptor("RentUnit#7").
-					SetRef("My Reference").
-					Do(privateKey)
-				So(err, ShouldBeNil)
-				So(response.Success, ShouldBeTrue)
-				So(response.Status, ShouldEqual, "SUCCESS")
-				So(response.ValidationDetails, ShouldBeNil)
-				So(response.Reference, ShouldEqual, "My Reference")
-			})
-		})
-	})
-}
+				Convey("A call to get transactions for the wallet should succeed", func() {
+					now := time.Now()
+					response, err := client.GetTransactions(userHandle).
+						SetSearchFilters(sila.TransactionSearchFilters{
+							ShowTimelines: true,
+							SortAscending: true,
+							MaxSilaAmount: 10000000,
+							MinSilaAmount: 50,
+							StartTime:     now.Add(-1 * time.Hour),
+							EndTime:       now.Add(1 * time.Hour),
+							Page:          1,
+							PerPage:       10,
+						}).
+						Do(userWalletPrivateKey)
+					So(err, ShouldBeNil)
+					So(response.Success, ShouldBeTrue)
+					So(response.Status, ShouldEqual, "SUCCESS")
+					So(response.ValidationDetails, ShouldBeNil)
+					So(response.Page, ShouldEqual, 1)
+					So(response.ReturnedCount, ShouldBeGreaterThanOrEqualTo, 1)
+					So(response.TotalCount, ShouldBeGreaterThanOrEqualTo, 1)
+					So(response.Transactions, ShouldNotBeEmpty)
+					So(response.Transactions, ShouldHaveLength, response.ReturnedCount)
+				})
 
-func TestClient_RedeemSila(t *testing.T) {
-	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
-		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
-			testConfig.AuthPrivateKeyKex,
-			testConfig.AuthHandle,
-			sila.Sandbox)
-		So(err, ShouldBeNil)
-		Convey("The 'existing' wallet private key and address are generated", func() {
-			privateKey, err := sila.GenerateNewPrivateKey()
-			So(err, ShouldBeNil)
-			Convey("The call to redeem Sila coin from a wallet should succeed", func() {
-				response, err := client.RedeemSila("user.silamoney.eth").
-					SetAmountFromAccount(10000, "default").
-					SetDescriptor("RentUnit#7").
-					SetProcessingType("STANDARD_ACH").
-					SetRef("My Reference").
-					Do(privateKey)
-				So(err, ShouldBeNil)
-				So(response.Success, ShouldBeTrue)
-				So(response.Status, ShouldEqual, "SUCCESS")
-				So(response.ValidationDetails, ShouldBeNil)
-				So(response.Reference, ShouldEqual, "My Reference")
-			})
-		})
-	})
-}
-
-func TestClient_GetTransactions(t *testing.T) {
-	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
-		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
-			testConfig.AuthPrivateKeyKex,
-			testConfig.AuthHandle,
-			sila.Sandbox)
-		So(err, ShouldBeNil)
-		Convey("The 'existing' wallet private key and address are generated", func() {
-			privateKey, err := sila.GenerateNewPrivateKey()
-			So(err, ShouldBeNil)
-			Convey("The call to get transactions should succeed", func() {
-				now := time.Now()
-				response, err := client.GetTransactions("user.silamoney.eth").
-					SetSearchFilters(sila.TransactionSearchFilters{
-						ShowTimelines: true,
-						SortAscending: true,
-						MaxSilaAmount: 10000000,
-						MinSilaAmount: 50,
-						StartTime:     now.Add(-4 * time.Hour),
-						EndTime:       now.Add(4 * time.Hour),
-						Page:          1,
-						PerPage:       10,
-					}).
-					SetRef("My Reference").
-					Do(privateKey)
-				So(err, ShouldBeNil)
-				So(response.Success, ShouldBeTrue)
-				So(response.Status, ShouldEqual, "SUCCESS")
-				So(response.ValidationDetails, ShouldBeNil)
-				So(response.Reference, ShouldEqual, "My Reference")
-			})
-		})
-	})
-}
-
-func TestClient_CancelTransaction(t *testing.T) {
-	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
-		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
-			testConfig.AuthPrivateKeyKex,
-			testConfig.AuthHandle,
-			sila.Sandbox)
-		So(err, ShouldBeNil)
-		Convey("The 'existing' wallet private key and address are generated", func() {
-			privateKey, err := sila.GenerateNewPrivateKey()
-			So(err, ShouldBeNil)
-			Convey("A transaction to issue sila coin should exist and be in progress", func() {
-				transactionResponse, err := client.IssueSila("user.silamoney.eth").
-					SetAmountToAccount(10000, "default").
-					SetDescriptor("RentUnit#7").
-					SetProcessingType("STANDARD_ACH").
-					Do(privateKey)
-				So(err, ShouldBeNil)
-				So(transactionResponse.Success, ShouldBeTrue)
-
-				Convey("The call to cancel a transaction should succeed", func() {
-					response, err := client.CancelTransaction("user.silamoney.eth", transactionResponse.TransactionId).
+				Convey("A call to cancel the Sila coin issue transaction should succeed", func() {
+					response, err := client.CancelTransaction(userHandle, transactionId).
 						SetRef("My Reference").
-						Do(privateKey)
+						Do(userWalletPrivateKey)
 					So(err, ShouldBeNil)
 					So(response.Success, ShouldBeTrue)
 					So(response.Status, ShouldEqual, "SUCCESS")
 					So(response.ValidationDetails, ShouldBeNil)
 					So(response.Reference, ShouldEqual, "My Reference")
+
+					Convey("The transaction should display as cancelled when fetched", func() {
+						response, err := client.GetTransactions(userHandle).
+							SetSearchFilters(sila.TransactionSearchFilters{
+								TransactionId: transactionId,
+								Statuses:      []string{"failed"},
+								Page:          1,
+								PerPage:       5,
+							}).
+							Do(userWalletPrivateKey)
+						So(err, ShouldBeNil)
+						So(response.Success, ShouldBeTrue)
+						So(response.ReturnedCount, ShouldNotBeEmpty)
+					})
+				})
+			})
+
+			Convey("And the specified integration user has a second wallet", func() {
+				newWalletPrivateKey, err := sila.GenerateNewPrivateKey()
+				So(err, ShouldBeNil)
+				newWalletAddress, err := sila.GetWalletAddress(newWalletPrivateKey)
+				So(err, ShouldBeNil)
+				signature, err := sila.GenerateWalletSignature([]byte(newWalletAddress), newWalletPrivateKey)
+
+				response, err := client.RegisterWallet(userHandle).
+					SetWallet("transaction test wallet", newWalletAddress, signature).
+					Do(userWalletPrivateKey)
+				So(err, ShouldBeNil)
+				So(response.Success, ShouldBeTrue)
+
+				Convey("A call to issue Sila coin to the main wallet should succeed", func() {
+					response, err := client.IssueSila(userHandle).
+						SetAmountFromAccount(100, "default").
+						SetDescriptor("DepositToSilaWallet").
+						SetProcessingType("STANDARD_ACH").
+						Do(userWalletPrivateKey)
+					So(err, ShouldBeNil)
+					So(response.Success, ShouldBeTrue)
+					transactionId := response.TransactionId
+
+					Convey("Wait for a bit, then check to see that the issue succeeded", func() {
+						time.Sleep(transactionSleepTime)
+						response, err := client.GetTransactions(userHandle).
+							SetSearchFilters(sila.TransactionSearchFilters{
+								TransactionId: transactionId,
+								Page:          1,
+								PerPage:       1,
+							}).
+							Do(userWalletPrivateKey)
+						So(err, ShouldBeNil)
+						So(response.Success, ShouldBeTrue)
+						So(response.ReturnedCount, ShouldNotBeEmpty)
+						So(response.Transactions[0].Status, ShouldEqual, "success")
+
+						Convey("A call to transfer Sila coin from the main wallet to the secondary wallet should succeed", func() {
+							response, err := client.TransferSila(userHandle).
+								SetAmountAndUser(100, userHandle).
+								SetDestinationAddress(newWalletAddress).
+								SetDescriptor("Moving Money").
+								SetRef("My Reference").
+								Do(userWalletPrivateKey)
+							So(err, ShouldBeNil)
+							So(response.Success, ShouldBeTrue)
+							So(response.Status, ShouldEqual, "SUCCESS")
+							So(response.ValidationDetails, ShouldBeNil)
+							So(response.Reference, ShouldEqual, "My Reference")
+							So(response.Message, ShouldEqual, "Transaction submitted to processing queue.")
+							So(response.TransactionId, ShouldNotBeZeroValue)
+							So(response.Descriptor, ShouldEqual, "Moving Money")
+							transactionId := response.TransactionId
+
+							Convey("Wait for a bit, then check to see that the transfer succeeded", func() {
+								time.Sleep(transactionSleepTime)
+								response, err := client.GetTransactions(userHandle).
+									SetSearchFilters(sila.TransactionSearchFilters{
+										TransactionId: transactionId,
+										Page:          1,
+										PerPage:       1,
+									}).
+									Do(userWalletPrivateKey)
+								So(err, ShouldBeNil)
+								So(response.Success, ShouldBeTrue)
+								So(response.ReturnedCount, ShouldNotBeEmpty)
+								So(response.Transactions[0].Status, ShouldEqual, "success")
+
+								Convey("A call to redeem Sila coin from the secondary wallet should succeed", func() {
+									response, err := client.RedeemSila(userHandle).
+										SetAmountToAccount(100, "default").
+										SetDescriptor("Redeem Money").
+										SetProcessingType("STANDARD_ACH").
+										SetRef("My Reference").
+										Do(newWalletPrivateKey)
+									So(err, ShouldBeNil)
+									So(response.Success, ShouldBeTrue)
+									So(response.Status, ShouldEqual, "SUCCESS")
+									So(response.ValidationDetails, ShouldBeNil)
+									So(response.Reference, ShouldEqual, "My Reference")
+									So(response.Message, ShouldEqual, "Transaction submitted to processing queue.")
+									So(response.TransactionId, ShouldNotBeZeroValue)
+									So(response.Descriptor, ShouldEqual, "Redeem Money")
+									transactionId := response.TransactionId
+
+									Convey("Wait for a bit, then check to see that the transfer succeeded", func() {
+										time.Sleep(transactionSleepTime)
+										response, err := client.GetTransactions(userHandle).
+											SetSearchFilters(sila.TransactionSearchFilters{
+												TransactionId: transactionId,
+												Page:          1,
+												PerPage:       1,
+											}).
+											Do(userWalletPrivateKey)
+										So(err, ShouldBeNil)
+										So(response.Success, ShouldBeTrue)
+										So(response.ReturnedCount, ShouldNotBeEmpty)
+										So(response.Transactions[0].Status, ShouldEqual, "success")
+									})
+								})
+							})
+						})
+					})
 				})
 			})
 		})

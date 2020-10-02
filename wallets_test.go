@@ -2,17 +2,15 @@ package sila_test
 
 import (
 	uuid "github.com/satori/go.uuid"
-	"testing"
-	"time"
-
 	. "github.com/smartystreets/goconvey/convey"
+	"testing"
 
 	"sila"
 )
 
 func TestClient_Wallets(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
+		testConfig, err := readTestConfig()
 		So(err, ShouldBeNil)
 		userHandle := testConfig.UserHandle
 		userWalletPrivateKey := testConfig.UserWalletPrivateKeyHex
@@ -24,36 +22,7 @@ func TestClient_Wallets(t *testing.T) {
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("And the specified integration user exists and has passed KYC", func() {
-			response, err := client.CheckHandle(userHandle).Do()
-			So(err, ShouldBeNil)
-			if response.Success == true {
-				registerResponse, err := client.Register(userHandle).
-					SetIndividualEntity("Alberta", "Bobbeth", "1950-10-31").
-					SetAddress(sila.RegistrationAddress{
-						AddressAlias:   "Home",
-						StreetAddress1: "1234 Fake St.",
-						City:           "Los Angeles",
-						State:          "CA",
-						Country:        "US",
-						PostalCode:     "90001",
-					}).
-					SetIdentity(sila.Ssn, "181-91-1478").
-					SetContact("Home", "123-456-7890", "alberta@bobbeth.com").
-					SetCrypto("Main Address", userWalletAddress).
-					Do()
-				So(err, ShouldBeNil)
-				So(registerResponse.Success, ShouldBeTrue)
-
-				requestKycResponse, err := client.RequestKyc(userHandle).Do(userWalletPrivateKey)
-				So(err, ShouldBeNil)
-				So(requestKycResponse.Success, ShouldBeTrue)
-
-				time.Sleep(30 * time.Second)
-
-				checkKycResponse, err := client.CheckKyc(userHandle).Do(userWalletPrivateKey)
-				So(err, ShouldBeNil)
-				So(checkKycResponse.Success, ShouldBeTrue)
-			}
+			ensureIntegrationUserExists(client, userHandle, userWalletAddress, userWalletPrivateKey)
 
 			Convey("A call to get a main wallet's balance should succeed", func() {
 				response, err := client.GetWalletBalance(userWalletAddress).Do()
@@ -73,7 +42,6 @@ func TestClient_Wallets(t *testing.T) {
 				So(response.ValidationDetails, ShouldBeNil)
 				So(response.Reference, ShouldEqual, "My Reference")
 				So(response.IsWhitelisted, ShouldBeTrue)
-				So(response.SilaBalance, ShouldBeZeroValue)
 				So(response.Wallet.BlockchainAddress, ShouldEqual, userWalletAddress)
 			})
 

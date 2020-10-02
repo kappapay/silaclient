@@ -11,11 +11,6 @@ type GetTransactions struct {
 	SearchFilters TransactionSearchFilters `json:"search_filters,omitempty"`
 }
 
-func (msg *GetTransactions) SetRef(ref string) *GetTransactions {
-	msg.Header.setRef(ref)
-	return msg
-}
-
 type TransactionSearchFilters struct {
 	TransactionId    string    `json:"transaction_id,omitempty"`
 	ReferenceId      string    `json:"reference_id,omitempty"`
@@ -32,6 +27,14 @@ type TransactionSearchFilters struct {
 }
 
 func (filters *TransactionSearchFilters) MarshalJSON() ([]byte, error) {
+	var startTimeEpoch int64
+	if filters.StartTime.Unix() > 0 {
+		startTimeEpoch = filters.StartTime.Unix()
+	}
+	var endTimeEpoch int64
+	if filters.EndTime.Unix() > 0 {
+		endTimeEpoch = filters.EndTime.Unix()
+	}
 	convertedSearchFilters := struct {
 		TransactionId    string   `json:"transaction_id,omitempty"`
 		ReferenceId      string   `json:"reference_id,omitempty"`
@@ -53,8 +56,8 @@ func (filters *TransactionSearchFilters) MarshalJSON() ([]byte, error) {
 		MaxSilaAmount:    filters.MaxSilaAmount,
 		MinSilaAmount:    filters.MinSilaAmount,
 		Statuses:         filters.Statuses,
-		StartTime:        filters.StartTime.Unix(),
-		EndTime:          filters.EndTime.Unix(),
+		StartTime:        startTimeEpoch,
+		EndTime:          endTimeEpoch,
 		Page:             filters.Page,
 		PerPage:          filters.PerPage,
 		TransactionTypes: filters.TransactionTypes,
@@ -70,7 +73,6 @@ func (msg *GetTransactions) SetSearchFilters(searchFilters TransactionSearchFilt
 
 type GetTransactionsResponse struct {
 	Success           bool                   `json:"success"`
-	Reference         string                 `json:"reference"`
 	Message           string                 `json:"message"`
 	Status            string                 `json:"status"`
 	ValidationDetails map[string]interface{} `json:"validation_details"`
@@ -86,7 +88,7 @@ type Transaction struct {
 	TransactionId      string                 `json:"transaction_id"`
 	TransactionHash    string                 `json:"transaction_hash"`
 	TransactionType    string                 `json:"transaction_type"`
-	SilaAmount         int64                  `json:"sila_amount"`
+	SilaAmount         float64                `json:"sila_amount"`
 	BankAccountName    string                 `json:"bank_account_name"`
 	Status             string                 `json:"status"`
 	UsdStatus          string                 `json:"usd_status"`
@@ -124,7 +126,7 @@ func (t *Transaction) UnmarshalJSON(data []byte) error {
 		case "transaction_type":
 			t.TransactionType = value.(string)
 		case "sila_amount":
-			t.SilaAmount = value.(int64)
+			t.SilaAmount = value.(float64)
 		case "bank_account_name":
 			t.BankAccountName = value.(string)
 		case "status":
@@ -156,7 +158,28 @@ func (t *Transaction) UnmarshalJSON(data []byte) error {
 		case "handle_address":
 			t.HandleAddress = value.(string)
 		case "timeline":
-			t.Timeline = value.([]TransactionTimePoint)
+			arrValue := value.([]interface{})
+			convertedValue := make([]TransactionTimePoint, len(arrValue))
+			for index, rawValue := range arrValue {
+				mapValue := rawValue.(map[string]interface{})
+				var ttp TransactionTimePoint
+				for key, value := range mapValue {
+					switch key {
+					case "date":
+						ttp.Date = value.(string)
+					case "date_epoch":
+						ttp.DateTime = time.Unix(int64(value.(float64)), 0)
+					case "status":
+						ttp.Status = value.(string)
+					case "usd_status":
+						ttp.UsdStatus = value.(string)
+					case "token_status":
+						ttp.TokenStatus = value.(string)
+					}
+				}
+				convertedValue[index] = ttp
+			}
+			t.Timeline = convertedValue
 		}
 
 	}

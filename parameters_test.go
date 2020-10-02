@@ -10,7 +10,7 @@ import (
 
 func TestClient_Parameters(t *testing.T) {
 	Convey("Given the Sila client exists", t, func() {
-		testConfig, err := ReadTestConfig()
+		testConfig, err := readTestConfig()
 		So(err, ShouldBeNil)
 		client, err := sila.NewClient(
 			testConfig.AuthPrivateKeyKex,
