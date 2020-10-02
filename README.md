@@ -51,3 +51,16 @@ This project aims to create a native SDK for Golang for the Sila API.
 * [x] [/get_business_types](https://docs.silamoney.com/docs/get_business_types)
 * [x] [/get_business_roles](https://docs.silamoney.com/docs/get_business_roles)
 * [x] [/get_naics_categories](https://docs.silamoney.com/docs/get_naics_categories)
+
+## Integration Tests
+
+To use the included integration tests, create a file named `test_config.yaml` using the `test_config_sample.yaml` as a
+template. Provide your auth key as a hex string, your auth handle, a unique user handle specifically for this testing,
+and a private key as a hex string for the integration user's wallet which will be their main wallet. You can use a tool
+like [Vanity-Eth](https://vanity-eth.tk/) to help generate a new wallet address and private key.
+
+Most tests will complete quickly, though the transaction tests require several minute sleeps to verify they completed 
+and will take around 10 minutes to complete.
+
+If you would like to view the integration test progress via a web page, you can use `goconvey` from a terminal and then
+navigate to [http://127.0.0.1:8080](http://127.0.0.1:8080).
