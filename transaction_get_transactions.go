@@ -1,7 +1,7 @@
 package sila
 
 import (
-	"sila/domain"
+	"github.com/bpancost/sila/domain"
 )
 
 func (client ClientImpl) GetTransactions(userHandle string) GetTransactions {

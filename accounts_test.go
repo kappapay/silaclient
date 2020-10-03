@@ -5,7 +5,7 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"sila"
+	"github.com/bpancost/sila"
 )
 
 func TestClient_Accounts(t *testing.T) {

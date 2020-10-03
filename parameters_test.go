@@ -1,10 +1,11 @@
 package sila_test
 
 import (
-	"sila"
 	"testing"
 
 	. "github.com/smartystreets/goconvey/convey"
+
+	"github.com/bpancost/sila"
 )
 
 func TestClient_Parameters(t *testing.T) {

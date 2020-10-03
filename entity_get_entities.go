@@ -1,8 +1,9 @@
 package sila
 
 import (
-	"sila/domain"
 	"strconv"
+
+	"github.com/bpancost/sila/domain"
 )
 
 func (client ClientImpl) GetEntities() GetEntities {

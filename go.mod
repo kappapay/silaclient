@@ -1,4 +1,4 @@
-module sila
+module github.com/bpancost/sila
 
 go 1.15
 

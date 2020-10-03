@@ -6,8 +6,8 @@ import (
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"sila"
-	"sila/domain"
+	"github.com/bpancost/sila"
+	"github.com/bpancost/sila/domain"
 )
 
 func TestClient_Wallets(t *testing.T) {

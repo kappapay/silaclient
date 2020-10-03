@@ -1,7 +1,7 @@
 package sila
 
 import (
-	"sila/domain"
+	"github.com/bpancost/sila/domain"
 )
 
 func (client ClientImpl) GetWalletBalance(walletAddress string) GetSilaBalance {

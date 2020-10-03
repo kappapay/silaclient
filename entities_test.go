@@ -1,13 +1,13 @@
 package sila_test
 
 import (
-	"sila/domain"
 	"testing"
 
 	uuid "github.com/satori/go.uuid"
 	. "github.com/smartystreets/goconvey/convey"
 
-	"sila"
+	"github.com/bpancost/sila"
+	"github.com/bpancost/sila/domain"
 )
 
 func TestClient_IndividualEntityRegistration(t *testing.T) {

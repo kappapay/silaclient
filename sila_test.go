@@ -6,8 +6,8 @@ import (
 	. "github.com/smartystreets/goconvey/convey"
 	"github.com/spf13/viper"
 
-	"sila"
-	"sila/domain"
+	"github.com/bpancost/sila"
+	"github.com/bpancost/sila/domain"
 )
 
 type TestConfigData struct {

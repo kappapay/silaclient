@@ -1,6 +1,6 @@
 package sila
 
-import "sila/domain"
+import "github.com/bpancost/sila/domain"
 
 type GetBusinessTypes interface {
 	Do() (domain.GetBusinessTypesResponse, error)
