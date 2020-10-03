@@ -1,10 +1,11 @@
 # Sila Client
 
-This project aims to create a native SDK for Golang for the Sila API.
-
-[Sila Documentation](https://docs.silamoney.com)
+This project creates a native SDK for the Sila API in Golang. To learn more about Sila and how it works, please go to
+their [website](https://silamoney.com) as well as read the [documentation](https://docs.silamoney.com).
 
 ## Implemented Endpoints
+
+The current version of this library implemented the following endpoints.
 
 ### Entities
 
@@ -51,6 +52,45 @@ This project aims to create a native SDK for Golang for the Sila API.
 * [x] [/get_business_types](https://docs.silamoney.com/docs/get_business_types)
 * [x] [/get_business_roles](https://docs.silamoney.com/docs/get_business_roles)
 * [x] [/get_naics_categories](https://docs.silamoney.com/docs/get_naics_categories)
+
+## Usage
+
+To use the Sila SDK, first import:
+
+```go
+import "github.com/bpancost/sila"
+```
+
+From there, create a new client by using
+```go
+// The the auth private key as a hex string, without the "0x" prefixed
+privateKeyHex := "badba7368134dcd61c60f9b56979c09196d03f5891a20c1557b1afac0202a97c"
+// The handle associated with your auth account
+authHandle := "handle.silamoney.eth"
+// A production client can be created by using sila.Production instead of sila.Sandbox
+client, err := sila.NewClient(privateKeyHex, authHandle, sila.Sandbox)
+```
+
+With the client, it is possible to make any of the included calls. Each is a chainable series of method calls, ending
+with a call to the `Do` method. For example, to get a list of entities you could use
+```go
+response, err := silaClient.GetEntities().
+                            SetPage(1).
+                            SetPerPage(20).
+                            Do()
+```
+
+There are several functions within the `github.com/bpancost/sila` package which can be used to manipulate or create keys
+for wallets, which will be required for certain calls.
+
+* `GenerateNewPrivateKey() (string, error)`
+    * Generates a private key for a new wallet. This should generally not be shared or shown outside of your system and
+    will be used for subsequent calls related to the wallet, or as a means of identifying the user who owns the wallet.
+* `GetWalletAddress(privateKeyHex string) (string, error)`
+    * Gets the public address for the wallet. This is used to publicly indicate a wallet and is always visible on the
+    blockchain, including any transactions.
+* `GenerateWalletSignature(message []byte, walletPrivateKeyHex string) (string, error)`
+    * Signs an arbitrary message using a wallet's private key as a hex string.
 
 ## Integration Tests
 

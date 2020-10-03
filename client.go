@@ -230,7 +230,7 @@ func (client *ClientImpl) performPublicCall(path string, requestBody interface{}
 
 // Gets a wallet address from a wallet's private key as a hex string and returns the wallet address
 func GetWalletAddress(privateKeyHex string) (string, error) {
-	publicKeyECDSA, err := GetPublicKeyFromPrivateHex(privateKeyHex)
+	publicKeyECDSA, err := getPublicKeyFromPrivateHex(privateKeyHex)
 	if err != nil {
 		return "", err
 	}
@@ -239,7 +239,7 @@ func GetWalletAddress(privateKeyHex string) (string, error) {
 }
 
 // Gets a public key from a private key hex string
-func GetPublicKeyFromPrivateHex(privateKeyHex string) (*ecdsa.PublicKey, error) {
+func getPublicKeyFromPrivateHex(privateKeyHex string) (*ecdsa.PublicKey, error) {
 	privateKey, err := crypto.HexToECDSA(privateKeyHex)
 	if err != nil {
 		return nil, err
