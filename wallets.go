@@ -1,37 +1,35 @@
 package sila
 
-func (client Client) RegisterWallet(userHandle string) *RegisterWallet {
-	return &RegisterWallet{
-		Header: client.generateHeader().setUserHandle(userHandle),
-	}
+import "sila/domain"
+
+type RegisterWallet interface {
+	SetRef(ref string) RegisterWallet
+	SetWallet(nickname string, address string, newWalletSignature string) RegisterWallet
+	Do(userWalletPrivateKey string) (domain.RegisterWalletResponse, error)
 }
 
-func (client Client) GetWallet(userHandle string) *GetWallet {
-	return &GetWallet{
-		Header: client.generateHeader().setUserHandle(userHandle),
-	}
+type GetWallet interface {
+	SetRef(ref string) GetWallet
+	Do(userWalletPrivateKey string) (domain.GetWalletResponse, error)
 }
 
-func (client Client) GetWallets(userHandle string) *GetWallets {
-	return &GetWallets{
-		Header: client.generateHeader().setUserHandle(userHandle),
-	}
+type GetWallets interface {
+	SetSearchFilters(filters domain.WalletSearchFilters) GetWallets
+	Do(userWalletPrivateKey string) (domain.GetWalletsResponse, error)
 }
 
-func (client Client) UpdateWallet(userHandle string) *UpdateWallet {
-	return &UpdateWallet{
-		Header: client.generateHeader().setUserHandle(userHandle),
-	}
+type UpdateWallet interface {
+	SetRef(ref string) UpdateWallet
+	SetNickname(nickname string) UpdateWallet
+	SetDefault(isDefault bool) UpdateWallet
+	Do(userWalletPrivateKey string) (domain.UpdateWalletResponse, error)
 }
 
-func (client Client) GetWalletBalance(walletAddress string) *GetSilaBalance {
-	return &GetSilaBalance{
-		Address: walletAddress,
-	}
+type GetSilaBalance interface {
+	Do() (domain.GetSilaBalanceResponse, error)
 }
 
-func (client Client) DeleteWallet(userHandle string) *DeleteWallet {
-	return &DeleteWallet{
-		Header: client.generateHeader().setUserHandle(userHandle),
-	}
+type DeleteWallet interface {
+	SetRef(ref string) DeleteWallet
+	Do(userWalletPrivateKey string) (domain.SuccessResponse, error)
 }

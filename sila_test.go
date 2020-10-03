@@ -7,6 +7,7 @@ import (
 	"github.com/spf13/viper"
 
 	"sila"
+	"sila/domain"
 )
 
 type TestConfigData struct {
@@ -33,9 +34,9 @@ func readTestConfig() (TestConfigData, error) {
 	return testConfigData, nil
 }
 
-func ensureIntegrationUserExistsWithLinkedAccount(client *sila.Client, userHandle string, userWalletAddress string, userWalletPrivateKey string) {
-	ensureIntegrationUserExists(client, userHandle, userWalletAddress, userWalletPrivateKey)
-	response, err := client.LinkAccount(userHandle).
+func ensureIntegrationUserExistsWithLinkedAccount(silaClient sila.Client, userHandle string, userWalletAddress string, userWalletPrivateKey string) {
+	ensureIntegrationUserExists(silaClient, userHandle, userWalletAddress, userWalletPrivateKey)
+	response, err := silaClient.LinkAccount(userHandle).
 		SetAccountName("default").
 		SetAccountType("CHECKING").
 		SetDirectLinkAccount("123456789012", "123456789").
@@ -44,13 +45,13 @@ func ensureIntegrationUserExistsWithLinkedAccount(client *sila.Client, userHandl
 	So(response.Success, ShouldBeTrue)
 }
 
-func ensureIntegrationUserExists(client *sila.Client, userHandle string, userWalletAddress string, userWalletPrivateKey string) {
-	response, err := client.CheckHandle(userHandle).Do()
+func ensureIntegrationUserExists(silaClient sila.Client, userHandle string, userWalletAddress string, userWalletPrivateKey string) {
+	response, err := silaClient.CheckHandle(userHandle).Do()
 	So(err, ShouldBeNil)
 	if response.Success == true {
-		registerResponse, err := client.Register(userHandle).
+		registerResponse, err := silaClient.Register(userHandle).
 			SetIndividualEntity("Alberta", "Bobbeth", "1950-10-31").
-			SetAddress(sila.RegistrationAddress{
+			SetAddress(domain.RegistrationAddress{
 				AddressAlias:   "Home",
 				StreetAddress1: "1234 Fake St.",
 				City:           "Los Angeles",
@@ -58,20 +59,20 @@ func ensureIntegrationUserExists(client *sila.Client, userHandle string, userWal
 				Country:        "US",
 				PostalCode:     "90001",
 			}).
-			SetIdentity(sila.Ssn, "181-91-1478").
+			SetIdentity(domain.Ssn, "181-91-1478").
 			SetContact("Home", "123-456-7890", "alberta@bobbeth.com").
 			SetCrypto("Main Address", userWalletAddress).
 			Do()
 		So(err, ShouldBeNil)
 		So(registerResponse.Success, ShouldBeTrue)
 
-		requestKycResponse, err := client.RequestKyc(userHandle).Do(userWalletPrivateKey)
+		requestKycResponse, err := silaClient.RequestKyc(userHandle).Do(userWalletPrivateKey)
 		So(err, ShouldBeNil)
 		So(requestKycResponse.Success, ShouldBeTrue)
 
 		time.Sleep(30 * time.Second)
 
-		checkKycResponse, err := client.CheckKyc(userHandle).Do(userWalletPrivateKey)
+		checkKycResponse, err := silaClient.CheckKyc(userHandle).Do(userWalletPrivateKey)
 		So(err, ShouldBeNil)
 		So(checkKycResponse.Success, ShouldBeTrue)
 	}

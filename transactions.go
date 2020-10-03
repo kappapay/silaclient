@@ -1,36 +1,37 @@
 package sila
 
-func (client Client) IssueSila(userHandle string) *IssueSila {
-	return &IssueSila{
-		Header:  client.generateHeader().setUserHandle(userHandle),
-		Message: "issue_msg",
-	}
-}
+import "sila/domain"
 
-func (client Client) TransferSila(userHandle string) *TransferSila {
-	return &TransferSila{
-		Header:  client.generateHeader().setUserHandle(userHandle),
-		Message: "transfer_msg",
-	}
+type IssueSila interface {
+	SetRef(ref string) IssueSila
+	SetAmountFromAccount(amount int64, accountName string) IssueSila
+	SetDescriptor(descriptor string) IssueSila
+	SetBusinessUuid(businessUuid string) IssueSila
+	SetProcessingType(processingType string) IssueSila
+	Do(userWalletPrivateKey string) (domain.IssueSilaResponse, error)
 }
-
-func (client Client) RedeemSila(userHandle string) *RedeemSila {
-	return &RedeemSila{
-		Header:  client.generateHeader().setUserHandle(userHandle),
-		Message: "redeem_msg",
-	}
+type TransferSila interface {
+	SetRef(ref string) TransferSila
+	SetAmountAndUser(amount int64, destinationHandle string) TransferSila
+	SetDestinationWallet(destinationWalletName string) TransferSila
+	SetDestinationAddress(destinationWalletAddress string) TransferSila
+	SetDescriptor(descriptor string) TransferSila
+	SetBusinessUuid(businessUuid string) TransferSila
+	Do(userWalletPrivateKey string) (domain.TransferSilaResponse, error)
 }
-
-func (client Client) GetTransactions(userHandle string) *GetTransactions {
-	return &GetTransactions{
-		Header:  client.generateHeader().setUserHandle(userHandle),
-		Message: "get_transactions_msg",
-	}
+type RedeemSila interface {
+	SetRef(ref string) RedeemSila
+	SetAmountToAccount(amount int64, accountName string) RedeemSila
+	SetDescriptor(descriptor string) RedeemSila
+	SetBusinessUuid(businessUuid string) RedeemSila
+	SetProcessingType(processingType string) RedeemSila
+	Do(userWalletPrivateKey string) (domain.RedeemSilaResponse, error)
 }
-
-func (client Client) CancelTransaction(userHandle string, transactionId string) *CancelTransactions {
-	return &CancelTransactions{
-		Header:        client.generateHeader().setUserHandle(userHandle),
-		TransactionId: transactionId,
-	}
+type GetTransactions interface {
+	SetSearchFilters(searchFilters domain.TransactionSearchFilters) GetTransactions
+	Do(userWalletPrivateKey string) (domain.GetTransactionsResponse, error)
+}
+type CancelTransactions interface {
+	SetRef(ref string) CancelTransactions
+	Do(userWalletPrivateKey string) (domain.SuccessResponse, error)
 }

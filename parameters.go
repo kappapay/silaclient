@@ -1,19 +1,15 @@
 package sila
 
-func (client Client) GetBusinessTypes() *GetBusinessTypes {
-	return &GetBusinessTypes{
-		Header: client.generateHeader(),
-	}
+import "sila/domain"
+
+type GetBusinessTypes interface {
+	Do() (domain.GetBusinessTypesResponse, error)
 }
 
-func (client Client) GetBusinessRoles() *GetBusinessRoles {
-	return &GetBusinessRoles{
-		Header: client.generateHeader(),
-	}
+type GetBusinessRoles interface {
+	Do() (domain.GetBusinessRolesResponse, error)
 }
 
-func (client Client) GetNaicsCategories() *GetNaicsCategories {
-	return &GetNaicsCategories{
-		Header: client.generateHeader(),
-	}
+type GetNaicsCategories interface {
+	Do() (domain.GetNaicsCategoriesResponse, error)
 }

@@ -13,7 +13,7 @@ type Header struct {
 }
 
 // Generate a header given information that can be readily generated or inferred from the Sila client
-func (client Client) generateHeader() *Header {
+func (client ClientImpl) generateHeader() *Header {
 	return &Header{
 		Created:    time.Now().Unix(),
 		AuthHandle: client.authHandle,

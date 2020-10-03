@@ -1,12 +1,18 @@
 package sila
 
 import (
-	"encoding/json"
+	"sila/domain"
 	"strconv"
-	"time"
 )
 
-type GetEntities struct {
+func (client ClientImpl) GetEntities() GetEntities {
+	return &GetEntitiesMsg{
+		Header:  client.generateHeader(),
+		Message: "header_msg",
+	}
+}
+
+type GetEntitiesMsg struct {
 	Header     *Header `json:"header"`
 	Message    string  `json:"message"`
 	EntityType string  `json:"entity_type,omitempty"`
@@ -14,127 +20,23 @@ type GetEntities struct {
 	PerPage    int32   `json:"-"`
 }
 
-func (msg *GetEntities) SetEntityType(entityType string) *GetEntities {
+func (msg *GetEntitiesMsg) SetEntityType(entityType string) GetEntities {
 	msg.EntityType = entityType
 	return msg
 }
 
-func (msg *GetEntities) SetPage(page int32) *GetEntities {
+func (msg *GetEntitiesMsg) SetPage(page int32) GetEntities {
 	msg.Page = page
 	return msg
 }
 
-func (msg *GetEntities) SetPerPage(perPage int32) *GetEntities {
+func (msg *GetEntitiesMsg) SetPerPage(perPage int32) GetEntities {
 	msg.PerPage = perPage
 	return msg
 }
 
-type GetEntitiesResponse struct {
-	Success           bool                   `json:"success"`
-	Message           string                 `json:"message"`
-	Status            string                 `json:"status"`
-	ValidationDetails map[string]interface{} `json:"validation_details"`
-	Entities          Entities               `json:"entities"`
-	Pagination        EntityPagination       `json:"pagination"`
-}
-
-type Entities struct {
-	Individuals []IndividualEntity `json:"individuals"`
-	Businesses  []BusinessEntity   `json:"businesses"`
-}
-
-type IndividualEntity struct {
-	Handle              string    `json:"handle"`
-	FullName            string    `json:"full_name"`
-	Created             time.Time `json:"created"`
-	Status              string    `json:"status"`
-	BlockchainAddresses []string  `json:"blockchain_addresses"`
-}
-
-func (ie *IndividualEntity) UnmarshalJSON(data []byte) error {
-	var raw map[string]interface{}
-	err := json.Unmarshal(data, &raw)
-	if err != nil {
-		return err
-	}
-	for key, value := range raw {
-		switch key {
-		case "handle":
-			ie.Handle = value.(string)
-		case "full_name":
-			if value != nil {
-				ie.FullName = value.(string)
-			}
-		case "created":
-			ie.Created = time.Unix(int64(value.(float64)), 0)
-		case "status":
-			ie.Status = value.(string)
-		case "blockchain_addresses":
-			arrValue := value.([]interface{})
-			convertedValue := make([]string, len(arrValue))
-			for index, rawValue := range arrValue {
-				convertedValue[index] = rawValue.(string)
-			}
-			ie.BlockchainAddresses = convertedValue
-		}
-	}
-	return nil
-}
-
-type BusinessEntity struct {
-	Handle              string    `json:"handle"`
-	FullName            string    `json:"full_name"`
-	Created             time.Time `json:"created"`
-	Status              string    `json:"status"`
-	BlockchainAddresses []string  `json:"blockchain_addresses"`
-	Uuid                string    `json:"uuid"`
-	BusinessType        string    `json:"business_type"`
-	Dba                 string    `json:"dba"`
-}
-
-func (be *BusinessEntity) UnmarshalJSON(data []byte) error {
-	var raw map[string]interface{}
-	err := json.Unmarshal(data, &raw)
-	if err != nil {
-		return err
-	}
-	for key, value := range raw {
-		switch key {
-		case "handle":
-			be.Handle = value.(string)
-		case "full_name":
-			be.FullName = value.(string)
-		case "created":
-			be.Created = time.Unix(int64(value.(float64)), 0)
-		case "status":
-			be.Status = value.(string)
-		case "blockchain_addresses":
-			arrValue := value.([]interface{})
-			convertedValue := make([]string, len(arrValue))
-			for index, rawValue := range arrValue {
-				convertedValue[index] = rawValue.(string)
-			}
-			be.BlockchainAddresses = convertedValue
-		case "uuid":
-			be.Uuid = value.(string)
-		case "business_type":
-			be.BusinessType = value.(string)
-		case "dba":
-			be.Dba = value.(string)
-		}
-	}
-	return nil
-}
-
-type EntityPagination struct {
-	ReturnedCount int32 `json:"returned_count"`
-	TotalCount    int64 `json:"total_count"`
-	CurrentPage   int32 `json:"current_page"`
-	TotalPages    int32 `json:"total_pages"`
-}
-
-func (msg *GetEntities) Do() (GetEntitiesResponse, error) {
-	var responseBody GetEntitiesResponse
+func (msg *GetEntitiesMsg) Do() (domain.GetEntitiesResponse, error) {
+	var responseBody domain.GetEntitiesResponse
 	path := "/get_entities"
 	var params string
 	if msg.Page > 0 {

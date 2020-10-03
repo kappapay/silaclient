@@ -1,6 +1,17 @@
 package sila
 
-type RedeemSila struct {
+import (
+	"sila/domain"
+)
+
+func (client ClientImpl) RedeemSila(userHandle string) RedeemSila {
+	return &RedeemSilaMsg{
+		Header:  client.generateHeader().setUserHandle(userHandle),
+		Message: "redeem_msg",
+	}
+}
+
+type RedeemSilaMsg struct {
 	Header         *Header `json:"header"`
 	Message        string  `json:"message"`
 	Amount         int64   `json:"amount"`
@@ -10,46 +21,36 @@ type RedeemSila struct {
 	ProcessingType string  `json:"processing_type,omitempty"`
 }
 
-func (msg *RedeemSila) SetRef(ref string) *RedeemSila {
+func (msg *RedeemSilaMsg) SetRef(ref string) RedeemSila {
 	msg.Header.setRef(ref)
 	return msg
 }
 
 // Sets the amount to take from the Sila wallet and put into the named linked account
-func (msg *RedeemSila) SetAmountToAccount(amount int64, accountName string) *RedeemSila {
+func (msg *RedeemSilaMsg) SetAmountToAccount(amount int64, accountName string) RedeemSila {
 	msg.Amount = amount
 	msg.AccountName = accountName
 	return msg
 }
 
-func (msg *RedeemSila) SetDescriptor(descriptor string) *RedeemSila {
+func (msg *RedeemSilaMsg) SetDescriptor(descriptor string) RedeemSila {
 	msg.Descriptor = descriptor
 	return msg
 }
 
-func (msg *RedeemSila) SetBusinessUuid(businessUuid string) *RedeemSila {
+func (msg *RedeemSilaMsg) SetBusinessUuid(businessUuid string) RedeemSila {
 	msg.BusinessUuid = businessUuid
 	return msg
 }
 
-func (msg *RedeemSila) SetProcessingType(processingType string) *RedeemSila {
+func (msg *RedeemSilaMsg) SetProcessingType(processingType string) RedeemSila {
 	msg.ProcessingType = processingType
 	return msg
 }
 
-type RedeemSilaResponse struct {
-	Success           bool                   `json:"success"`
-	Reference         string                 `json:"reference"`
-	Message           string                 `json:"message"`
-	Status            string                 `json:"status"`
-	ValidationDetails map[string]interface{} `json:"validation_details"`
-	TransactionId     string                 `json:"transaction_id"`
-	Descriptor        string                 `json:"descriptor,omitempty"`
-}
-
 // The wallet key passed in is what determines the which wallet redeems the Sila coin
-func (msg *RedeemSila) Do(userWalletPrivateKey string) (RedeemSilaResponse, error) {
-	var responseBody RedeemSilaResponse
+func (msg *RedeemSilaMsg) Do(userWalletPrivateKey string) (domain.RedeemSilaResponse, error) {
+	var responseBody domain.RedeemSilaResponse
 	err := instance.performCallWithUserAuth("/redeem_sila", msg, &responseBody, userWalletPrivateKey)
 	return responseBody, err
 }

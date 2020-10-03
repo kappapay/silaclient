@@ -16,17 +16,17 @@ func TestClient_Accounts(t *testing.T) {
 		userWalletPrivateKey := testConfig.UserWalletPrivateKeyHex
 		userWalletAddress, err := sila.GetWalletAddress(userWalletPrivateKey)
 		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
+		silaClient, err := sila.NewClient(
 			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("And the specified integration user exists and has passed KYC", func() {
-			ensureIntegrationUserExists(client, userHandle, userWalletAddress, userWalletPrivateKey)
+			ensureIntegrationUserExists(silaClient, userHandle, userWalletAddress, userWalletPrivateKey)
 
 			Convey("A call to directly link an account should succeed", func() {
 				accountName := "My Account"
-				response, err := client.LinkAccount(userHandle).
+				response, err := silaClient.LinkAccount(userHandle).
 					SetRef("My Reference").
 					SetAccountName(accountName).
 					SetAccountType("CHECKING").
@@ -40,7 +40,7 @@ func TestClient_Accounts(t *testing.T) {
 				So(response.Message, ShouldEqual, "Bank account successfully manually linked.")
 
 				Convey("A call to get the Plaid same day auth should fail, since the account was directly linked", func() {
-					response, err := client.PlaidSameDayAuth(userHandle, accountName).Do()
+					response, err := silaClient.PlaidSameDayAuth(userHandle, accountName).Do()
 					So(err, ShouldBeNil)
 					So(response.Success, ShouldBeFalse)
 					So(response.Status, ShouldEqual, "FAILURE")
@@ -48,7 +48,7 @@ func TestClient_Accounts(t *testing.T) {
 				})
 
 				Convey("A call to get the newly linked account's balance should fail since it was directly linked", func() {
-					response, err := client.GetAccountBalance(userHandle, accountName).
+					response, err := silaClient.GetAccountBalance(userHandle, accountName).
 						SetRef("My Reference").
 						Do(userWalletPrivateKey)
 					So(err, ShouldBeNil)
@@ -60,7 +60,7 @@ func TestClient_Accounts(t *testing.T) {
 				})
 
 				Convey("A call to get the accounts for the user should succeed", func() {
-					response, err := client.GetAccounts(userHandle).
+					response, err := silaClient.GetAccounts(userHandle).
 						Do(userWalletPrivateKey)
 					So(err, ShouldBeNil)
 					So(response.Accounts, ShouldNotBeEmpty)

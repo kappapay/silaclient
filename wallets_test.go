@@ -1,11 +1,13 @@
 package sila_test
 
 import (
-	uuid "github.com/satori/go.uuid"
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 
+	uuid "github.com/satori/go.uuid"
+	. "github.com/smartystreets/goconvey/convey"
+
 	"sila"
+	"sila/domain"
 )
 
 func TestClient_Wallets(t *testing.T) {
@@ -16,16 +18,16 @@ func TestClient_Wallets(t *testing.T) {
 		userWalletPrivateKey := testConfig.UserWalletPrivateKeyHex
 		userWalletAddress, err := sila.GetWalletAddress(userWalletPrivateKey)
 		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
+		silaClient, err := sila.NewClient(
 			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("And the specified integration user exists and has passed KYC", func() {
-			ensureIntegrationUserExists(client, userHandle, userWalletAddress, userWalletPrivateKey)
+			ensureIntegrationUserExists(silaClient, userHandle, userWalletAddress, userWalletPrivateKey)
 
 			Convey("A call to get a main wallet's balance should succeed", func() {
-				response, err := client.GetWalletBalance(userWalletAddress).Do()
+				response, err := silaClient.GetWalletBalance(userWalletAddress).Do()
 				So(err, ShouldBeNil)
 				So(response.Success, ShouldBeTrue)
 				So(response.Status, ShouldEqual, "SUCCESS")
@@ -33,7 +35,7 @@ func TestClient_Wallets(t *testing.T) {
 			})
 
 			Convey("A call to get the main wallet should succeed", func() {
-				response, err := client.GetWallet(userHandle).
+				response, err := silaClient.GetWallet(userHandle).
 					SetRef("My Reference").
 					Do(userWalletPrivateKey)
 				So(err, ShouldBeNil)
@@ -46,8 +48,8 @@ func TestClient_Wallets(t *testing.T) {
 			})
 
 			Convey("A call to get a user's wallets should succeed", func() {
-				response, err := client.GetWallets(userHandle).
-					SetSearchFilters(sila.WalletSearchFilters{
+				response, err := silaClient.GetWallets(userHandle).
+					SetSearchFilters(domain.WalletSearchFilters{
 						Page:          1,
 						PerPage:       5,
 						SortAscending: true,
@@ -72,7 +74,7 @@ func TestClient_Wallets(t *testing.T) {
 				signature, err := sila.GenerateWalletSignature([]byte(newWalletAddress), newWalletPrivateKey)
 
 				Convey("A call to register the wallet should succeed", func() {
-					response, err := client.RegisterWallet(userHandle).
+					response, err := silaClient.RegisterWallet(userHandle).
 						SetRef("My Reference").
 						SetWallet("My Integration Wallet", newWalletAddress, signature).
 						Do(userWalletPrivateKey)
@@ -85,7 +87,7 @@ func TestClient_Wallets(t *testing.T) {
 
 					Convey("A call to update the new wallet's nickname should succeed", func() {
 						updatedWalletNickname := uuid.NewV4().String()
-						response, err := client.UpdateWallet(userHandle).
+						response, err := silaClient.UpdateWallet(userHandle).
 							SetRef("My Reference").
 							SetNickname(updatedWalletNickname).
 							Do(newWalletPrivateKey)
@@ -101,7 +103,7 @@ func TestClient_Wallets(t *testing.T) {
 						So(response.Changes, ShouldNotBeEmpty)
 
 						Convey("A call to delete the new wallet should succeed", func() {
-							response, err := client.DeleteWallet(userHandle).
+							response, err := silaClient.DeleteWallet(userHandle).
 								SetRef("My Reference").
 								Do(newWalletPrivateKey)
 							So(err, ShouldBeNil)

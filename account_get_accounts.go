@@ -1,25 +1,23 @@
 package sila
 
-type GetAccounts struct {
+import (
+	"sila/domain"
+)
+
+func (client ClientImpl) GetAccounts(userHandle string) GetAccounts {
+	return &GetAccountsMsg{
+		Header:  client.generateHeader().setUserHandle(userHandle),
+		Message: "get_accounts_msg",
+	}
+}
+
+type GetAccountsMsg struct {
 	Header  *Header `json:"header"`
 	Message string  `json:"message"`
 }
 
-type GetAccountsResponse struct {
-	Accounts []Account `json:"accounts"`
-}
-
-type Account struct {
-	AccountNumber     string `json:"account_number,omitempty"`
-	RoutingNumber     string `json:"routing_number,omitempty"`
-	AccountName       string `json:"account_name"`
-	AccountStatus     string `json:"account_status"`
-	Active            bool   `json:"active"`
-	AccountLinkStatus string `json:"account_link_status"`
-}
-
-func (msg *GetAccounts) Do(userWalletPrivateKey string) (GetAccountsResponse, error) {
-	var responseBody GetAccountsResponse
+func (msg *GetAccountsMsg) Do(userWalletPrivateKey string) (domain.GetAccountsResponse, error) {
+	var responseBody domain.GetAccountsResponse
 	err := instance.performCallWithUserAuth("/get_accounts", msg, &responseBody.Accounts, userWalletPrivateKey)
 	return responseBody, err
 }

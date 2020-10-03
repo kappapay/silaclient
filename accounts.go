@@ -1,29 +1,27 @@
 package sila
 
-func (client Client) LinkAccount(userHandle string) *LinkAccount {
-	return &LinkAccount{
-		Header:  client.generateHeader().setUserHandle(userHandle),
-		Message: "link_account_msg",
-	}
+import (
+	"sila/domain"
+)
+
+type LinkAccount interface {
+	SetRef(ref string) LinkAccount
+	SetPlaidLinkAccount(publicToken string, selectedAccountId string) LinkAccount
+	SetDirectLinkAccount(accountNumber string, routingNumber string) LinkAccount
+	SetAccountType(accountType string) LinkAccount
+	SetAccountName(accountName string) LinkAccount
+	Do(userWalletPrivateKey string) (domain.LinkAccountResponse, error)
 }
 
-func (client Client) PlaidSameDayAuth(userHandle string, accountName string) *PlaidSameDayAuth {
-	return &PlaidSameDayAuth{
-		Header:      client.generateHeader().setUserHandle(userHandle),
-		AccountName: accountName,
-	}
+type PlaidSameDayAuth interface {
+	Do() (domain.PlaidSameDayAuthResponse, error)
 }
 
-func (client Client) GetAccounts(userHandle string) *GetAccounts {
-	return &GetAccounts{
-		Header:  client.generateHeader().setUserHandle(userHandle),
-		Message: "get_accounts_msg",
-	}
+type GetAccounts interface {
+	Do(userWalletPrivateKey string) (domain.GetAccountsResponse, error)
 }
 
-func (client Client) GetAccountBalance(userHandle string, accountName string) *GetAccountBalance {
-	return &GetAccountBalance{
-		Header:      client.generateHeader().setUserHandle(userHandle),
-		AccountName: accountName,
-	}
+type GetAccountBalance interface {
+	SetRef(ref string) GetAccountBalance
+	Do(userWalletPrivateKey string) (domain.GetAccountBalanceResponse, error)
 }

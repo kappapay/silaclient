@@ -1,11 +1,13 @@
 package sila_test
 
 import (
-	. "github.com/smartystreets/goconvey/convey"
 	"testing"
 	"time"
 
+	. "github.com/smartystreets/goconvey/convey"
+
 	"sila"
+	"sila/domain"
 )
 
 func TestClient_Transactions(t *testing.T) {
@@ -17,16 +19,16 @@ func TestClient_Transactions(t *testing.T) {
 		userWalletPrivateKey := testConfig.UserWalletPrivateKeyHex
 		userWalletAddress, err := sila.GetWalletAddress(userWalletPrivateKey)
 		So(err, ShouldBeNil)
-		client, err := sila.NewClient(
+		silaClient, err := sila.NewClient(
 			testConfig.AuthPrivateKeyKex,
 			testConfig.AuthHandle,
 			sila.Sandbox)
 		So(err, ShouldBeNil)
 		Convey("And the specified integration user exists and has passed KYC", func() {
-			ensureIntegrationUserExistsWithLinkedAccount(client, userHandle, userWalletAddress, userWalletPrivateKey)
+			ensureIntegrationUserExistsWithLinkedAccount(silaClient, userHandle, userWalletAddress, userWalletPrivateKey)
 
 			Convey("A call to issue Sila coin to the main wallet should succeed", func() {
-				response, err := client.IssueSila(userHandle).
+				response, err := silaClient.IssueSila(userHandle).
 					SetAmountFromAccount(100, "default").
 					SetDescriptor("DepositForCancel").
 					SetProcessingType("STANDARD_ACH").
@@ -44,8 +46,8 @@ func TestClient_Transactions(t *testing.T) {
 
 				Convey("A call to get transactions for the wallet should succeed", func() {
 					now := time.Now()
-					response, err := client.GetTransactions(userHandle).
-						SetSearchFilters(sila.TransactionSearchFilters{
+					response, err := silaClient.GetTransactions(userHandle).
+						SetSearchFilters(domain.TransactionSearchFilters{
 							ShowTimelines: true,
 							SortAscending: true,
 							MaxSilaAmount: 10000000,
@@ -68,7 +70,7 @@ func TestClient_Transactions(t *testing.T) {
 				})
 
 				Convey("A call to cancel the Sila coin issue transaction should succeed", func() {
-					response, err := client.CancelTransaction(userHandle, transactionId).
+					response, err := silaClient.CancelTransaction(userHandle, transactionId).
 						SetRef("My Reference").
 						Do(userWalletPrivateKey)
 					So(err, ShouldBeNil)
@@ -78,8 +80,8 @@ func TestClient_Transactions(t *testing.T) {
 					So(response.Reference, ShouldEqual, "My Reference")
 
 					Convey("The transaction should display as cancelled when fetched", func() {
-						response, err := client.GetTransactions(userHandle).
-							SetSearchFilters(sila.TransactionSearchFilters{
+						response, err := silaClient.GetTransactions(userHandle).
+							SetSearchFilters(domain.TransactionSearchFilters{
 								TransactionId: transactionId,
 								Statuses:      []string{"failed"},
 								Page:          1,
@@ -100,14 +102,14 @@ func TestClient_Transactions(t *testing.T) {
 				So(err, ShouldBeNil)
 				signature, err := sila.GenerateWalletSignature([]byte(newWalletAddress), newWalletPrivateKey)
 
-				response, err := client.RegisterWallet(userHandle).
+				response, err := silaClient.RegisterWallet(userHandle).
 					SetWallet("transaction test wallet", newWalletAddress, signature).
 					Do(userWalletPrivateKey)
 				So(err, ShouldBeNil)
 				So(response.Success, ShouldBeTrue)
 
 				Convey("A call to issue Sila coin to the main wallet should succeed", func() {
-					response, err := client.IssueSila(userHandle).
+					response, err := silaClient.IssueSila(userHandle).
 						SetAmountFromAccount(100, "default").
 						SetDescriptor("DepositToSilaWallet").
 						SetProcessingType("STANDARD_ACH").
@@ -118,8 +120,8 @@ func TestClient_Transactions(t *testing.T) {
 
 					Convey("Wait for a bit, then check to see that the issue succeeded", func() {
 						time.Sleep(transactionSleepTime)
-						response, err := client.GetTransactions(userHandle).
-							SetSearchFilters(sila.TransactionSearchFilters{
+						response, err := silaClient.GetTransactions(userHandle).
+							SetSearchFilters(domain.TransactionSearchFilters{
 								TransactionId: transactionId,
 								Page:          1,
 								PerPage:       1,
@@ -131,7 +133,7 @@ func TestClient_Transactions(t *testing.T) {
 						So(response.Transactions[0].Status, ShouldEqual, "success")
 
 						Convey("A call to transfer Sila coin from the main wallet to the secondary wallet should succeed", func() {
-							response, err := client.TransferSila(userHandle).
+							response, err := silaClient.TransferSila(userHandle).
 								SetAmountAndUser(100, userHandle).
 								SetDestinationAddress(newWalletAddress).
 								SetDescriptor("Moving Money").
@@ -149,8 +151,8 @@ func TestClient_Transactions(t *testing.T) {
 
 							Convey("Wait for a bit, then check to see that the transfer succeeded", func() {
 								time.Sleep(transactionSleepTime)
-								response, err := client.GetTransactions(userHandle).
-									SetSearchFilters(sila.TransactionSearchFilters{
+								response, err := silaClient.GetTransactions(userHandle).
+									SetSearchFilters(domain.TransactionSearchFilters{
 										TransactionId: transactionId,
 										Page:          1,
 										PerPage:       1,
@@ -162,7 +164,7 @@ func TestClient_Transactions(t *testing.T) {
 								So(response.Transactions[0].Status, ShouldEqual, "success")
 
 								Convey("A call to redeem Sila coin from the secondary wallet should succeed", func() {
-									response, err := client.RedeemSila(userHandle).
+									response, err := silaClient.RedeemSila(userHandle).
 										SetAmountToAccount(100, "default").
 										SetDescriptor("Redeem Money").
 										SetProcessingType("STANDARD_ACH").
@@ -180,8 +182,8 @@ func TestClient_Transactions(t *testing.T) {
 
 									Convey("Wait for a bit, then check to see that the transfer succeeded", func() {
 										time.Sleep(transactionSleepTime)
-										response, err := client.GetTransactions(userHandle).
-											SetSearchFilters(sila.TransactionSearchFilters{
+										response, err := silaClient.GetTransactions(userHandle).
+											SetSearchFilters(domain.TransactionSearchFilters{
 												TransactionId: transactionId,
 												Page:          1,
 												PerPage:       1,
