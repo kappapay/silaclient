@@ -4,12 +4,13 @@ import "time"
 
 // The header segment for every request made to Sila
 type Header struct {
-	Created    int64  `json:"created"`
-	AuthHandle string `json:"auth_handle"`
-	UserHandle string `json:"user_handle,omitempty"`
-	Version    string `json:"version"`
-	Crypto     string `json:"crypto"`
-	Reference  string `json:"reference,omitempty"`
+	Created        int64  `json:"created"`
+	AuthHandle     string `json:"auth_handle"`
+	UserHandle     string `json:"user_handle,omitempty"`
+	BusinessHandle string `json:"business_handle,omitempty"`
+	Version        string `json:"version"`
+	Crypto         string `json:"crypto"`
+	Reference      string `json:"reference,omitempty"`
 }
 
 // Generate a header given information that can be readily generated or inferred from the Sila client
@@ -25,6 +26,12 @@ func (client ClientImpl) generateHeader() *Header {
 // Sets the user handle in the header
 func (header *Header) setUserHandle(userHandle string) *Header {
 	header.UserHandle = userHandle
+	return header
+}
+
+// Sets the user handle in the header
+func (header *Header) setBusinessHandle(businessHandle string) *Header {
+	header.BusinessHandle = businessHandle
 	return header
 }
 

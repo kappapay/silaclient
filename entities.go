@@ -42,3 +42,30 @@ type GetEntities interface {
 	SetPerPage(perPage int32) GetEntities
 	Do() (domain.GetEntitiesResponse, error)
 }
+
+type LinkBusinessMember interface {
+	SetAdminMemberAsAdmin(newMemberHandle string) LinkBusinessMember
+	SetAdminMember() LinkBusinessMember
+	SetControllingOfficerMemberAsAdmin(newMemberHandle string) LinkBusinessMember
+	SetControllingOfficerMember() LinkBusinessMember
+	SetBeneficialOwnerMemberAsAdmin(newMemberHandle string, ownershipStake float64) LinkBusinessMember
+	SetBeneficialOwnerMember(ownershipStake float64) LinkBusinessMember
+	SetMemberDescription(description string) LinkBusinessMember
+	Do(userWalletPrivateKey string, businessWalletPrivateKey string) (LinkBusinessMemberResponse, error)
+}
+
+type UnlinkBusinessMember interface {
+	SetAdminRole() UnlinkBusinessMember
+	SetBeneficialOwnerRole() UnlinkBusinessMember
+	SetControllingOfficerRole() UnlinkBusinessMember
+	Do(userWalletPrivateKey string, businessWalletPrivateKey string) (UnlinkBusinessMemberResponse, error)
+}
+
+type CertifyBusiness interface {
+	Do(userWalletPrivateKey string, businessWalletPrivateKey string) (domain.SuccessResponse, error)
+}
+
+type CertifyBeneficialOwner interface {
+	SetCertificationToken(userHandleToCertify string, certificationToken string) CertifyBeneficialOwner
+	Do(userWalletPrivateKey string, businessWalletPrivateKey string) (domain.SuccessResponse, error)
+}

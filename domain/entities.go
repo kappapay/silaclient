@@ -137,13 +137,21 @@ func (ch *CertificationHistory) UnmarshalJSON(data []byte) error {
 		case "administrator_user_handle":
 			ch.AdministratorUserHandle = value.(string)
 		case "created":
-			ch.Created = value.(string)
+			if value != nil {
+				ch.Created = value.(string)
+			}
 		case "created_epoch":
-			ch.CreatedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ch.CreatedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "expires_after":
-			ch.ExpiresAfter = value.(string)
+			if value != nil {
+				ch.ExpiresAfter = value.(string)
+			}
 		case "expires_after_epoch":
-			ch.ExpiresAfterTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ch.ExpiresAfterTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "beneficial_owner_certifications":
 			arrValue := value.([]interface{})
 			convertedValue := make([]string, len(arrValue))

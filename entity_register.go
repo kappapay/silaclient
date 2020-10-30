@@ -4,9 +4,10 @@ import (
 	"github.com/bpancost/sila/domain"
 )
 
-func (client ClientImpl) Register(userHandle string) Register {
+// Register the user or business handle on Sila
+func (client ClientImpl) Register(userOrBusinessHandle string) Register {
 	return &RegisterMsg{
-		Header:  client.generateHeader().setUserHandle(userHandle),
+		Header:  client.generateHeader().setUserHandle(userOrBusinessHandle),
 		Message: "entity_msg",
 	}
 }
