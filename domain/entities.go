@@ -9,7 +9,7 @@ type EntityType string
 
 const (
 	Individual EntityType = "individual"
-	Business              = "business"
+	Business   EntityType = "business"
 )
 
 type RegistrationAddress struct {
@@ -26,15 +26,15 @@ type IdentityType string
 
 const (
 	Unknown IdentityType = "UNKNOWN"
-	Ssn                  = "SSN"
-	Ein                  = "EIN"
+	Ssn     IdentityType = "SSN"
+	Ein     IdentityType = "EIN"
 )
 
 func GetIdentityType(identityType string) IdentityType {
 	switch identityType {
-	case Ssn:
+	case "SSN":
 		return Ssn
-	case Ein:
+	case "EIN":
 		return Ein
 	default:
 		return Unknown
@@ -350,25 +350,45 @@ func (ea *EntityAddress) UnmarshalJSON(data []byte) error {
 	for key, value := range raw {
 		switch key {
 		case "added_epoch":
-			ea.AddedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ea.AddedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "modified_epoch":
-			ea.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ea.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "uuid":
-			ea.Uuid = value.(string)
+			if value != nil {
+				ea.Uuid = value.(string)
+			}
 		case "nickname":
-			ea.Nickname = value.(string)
+			if value != nil {
+				ea.Nickname = value.(string)
+			}
 		case "street_address_1":
-			ea.StreetAddress1 = value.(string)
+			if value != nil {
+				ea.StreetAddress1 = value.(string)
+			}
 		case "street_address_2":
-			ea.StreetAddress2 = value.(string)
+			if value != nil {
+				ea.StreetAddress2 = value.(string)
+			}
 		case "city":
-			ea.City = value.(string)
+			if value != nil {
+				ea.City = value.(string)
+			}
 		case "state":
-			ea.State = value.(string)
+			if value != nil {
+				ea.State = value.(string)
+			}
 		case "country":
-			ea.Country = value.(string)
+			if value != nil {
+				ea.Country = value.(string)
+			}
 		case "postal_code":
-			ea.PostalCode = value.(string)
+			if value != nil {
+				ea.PostalCode = value.(string)
+			}
 		}
 	}
 	return nil
@@ -391,15 +411,25 @@ func (ei *EntityIdentity) UnmarshalJSON(data []byte) error {
 	for key, value := range raw {
 		switch key {
 		case "added_epoch":
-			ei.AddedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ei.AddedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "modified_epoch":
-			ei.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ei.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "uuid":
-			ei.Uuid = value.(string)
+			if value != nil {
+				ei.Uuid = value.(string)
+			}
 		case "identity_type":
-			ei.IdentityType = GetIdentityType(value.(string))
+			if value != nil {
+				ei.IdentityType = GetIdentityType(value.(string))
+			}
 		case "identity":
-			ei.Identity = value.(string)
+			if value != nil {
+				ei.Identity = value.(string)
+			}
 		}
 	}
 	return nil
@@ -421,13 +451,21 @@ func (ee *EntityEmail) UnmarshalJSON(data []byte) error {
 	for key, value := range raw {
 		switch key {
 		case "added_epoch":
-			ee.AddedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ee.AddedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "modified_epoch":
-			ee.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ee.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "uuid":
-			ee.Uuid = value.(string)
+			if value != nil {
+				ee.Uuid = value.(string)
+			}
 		case "email":
-			ee.Email = value.(string)
+			if value != nil {
+				ee.Email = value.(string)
+			}
 		}
 	}
 	return nil
@@ -449,13 +487,21 @@ func (ep *EntityPhone) UnmarshalJSON(data []byte) error {
 	for key, value := range raw {
 		switch key {
 		case "added_epoch":
-			ep.AddedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ep.AddedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "modified_epoch":
-			ep.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			if value != nil {
+				ep.ModifiedTime = time.Unix(int64(value.(float64)), 0)
+			}
 		case "uuid":
-			ep.Uuid = value.(string)
+			if value != nil {
+				ep.Uuid = value.(string)
+			}
 		case "phone":
-			ep.Phone = value.(string)
+			if value != nil {
+				ep.Phone = value.(string)
+			}
 		}
 	}
 	return nil
@@ -477,4 +523,63 @@ type RequestKycResponse struct {
 	Status            string                 `json:"status"`
 	ValidationDetails map[string]interface{} `json:"validation_details"`
 	VerificationUuid  string                 `json:"verification_uuid"`
+}
+
+type LinkBusinessMemberResponse struct {
+	Success           bool                   `json:"success"`
+	Reference         string                 `json:"reference"`
+	Message           string                 `json:"message"`
+	Status            string                 `json:"status"`
+	ValidationDetails map[string]interface{} `json:"validation_details"`
+	Role              string                 `json:"role"`
+	Details           string                 `json:"details"`
+	VerificationUuid  string                 `json:"verification_uuid"`
+}
+
+type UnlinkBusinessMemberResponse struct {
+	Success           bool                   `json:"success"`
+	Reference         string                 `json:"reference"`
+	Message           string                 `json:"message"`
+	Status            string                 `json:"status"`
+	ValidationDetails map[string]interface{} `json:"validation_details"`
+	Role              string                 `json:"role"`
+}
+
+type RegistrationDataType string
+
+const (
+	UnknownDataType  RegistrationDataType = "Unknown"
+	EmailDataType    RegistrationDataType = "email"
+	PhoneDataType    RegistrationDataType = "phone"
+	IdentityDataType RegistrationDataType = "identity"
+	AddressDataType  RegistrationDataType = "address"
+	EntityDataType   RegistrationDataType = "entity"
+)
+
+func GetRegistrationDataType(registrationDataType string) RegistrationDataType {
+	switch registrationDataType {
+	case "email":
+		return EmailDataType
+	case "phone":
+		return PhoneDataType
+	case "identity":
+		return IdentityDataType
+	case "address":
+		return AddressDataType
+	case "entity":
+		return EntityDataType
+	default:
+		return UnknownDataType
+	}
+}
+
+type ModifyRegistrationDataResponse struct {
+	Success           bool                   `json:"success"`
+	Message           string                 `json:"message"`
+	Status            string                 `json:"status"`
+	ValidationDetails map[string]interface{} `json:"validation_details"`
+	Email             EntityEmail            `json:"email"`
+	Phone             EntityPhone            `json:"phone"`
+	Identity          EntityIdentity         `json:"identity"`
+	Address           EntityAddress          `json:"address"`
 }

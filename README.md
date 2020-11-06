@@ -11,9 +11,9 @@ The current version of this library implements the following endpoints according
 
 * [x] [/check_handle](https://docs.silamoney.com/docs/check_handle)
 * [x] [/register](https://docs.silamoney.com/docs/register)
-* [ ] [/add/\<registration-data\>](https://docs.silamoney.com/docs/addregistration-data)
-* [ ] [/update/\<registration-data\>](https://docs.silamoney.com/docs/updateregistration-data)
-* [ ] [/delete/\<registration-data\>](https://docs.silamoney.com/docs/deleteregistration-data)
+* [x] [/add/\<registration-data\>](https://docs.silamoney.com/docs/addregistration-data)
+* [x] [/update/\<registration-data\>](https://docs.silamoney.com/docs/updateregistration-data)
+* [x] [/delete/\<registration-data\>](https://docs.silamoney.com/docs/deleteregistration-data)
 * [x] [/link_business_member](https://docs.silamoney.com/docs/link_business_member)
 * [x] [/unlink_business_member](https://docs.silamoney.com/docs/unlink_business_member)
 * [x] [/request_kyc](https://docs.silamoney.com/docs/request_kyc)

@@ -74,6 +74,69 @@ func TestClient_IndividualEntityRegistration(t *testing.T) {
 				So(response.ValidationDetails, ShouldBeNil)
 				So(response.Reference, ShouldEqual, "My Reference")
 
+				Convey("A call to get the newly created entity should succeed", func() {
+					response, err := silaClient.GetEntity(userHandle).
+						Do(walletPrivateKey)
+					So(err, ShouldBeNil)
+					So(response.Success, ShouldBeTrue)
+					So(response.Status, ShouldEqual, "SUCCESS")
+					So(response.ValidationDetails, ShouldBeNil)
+					So(response.EntityType, ShouldEqual, "individual")
+					So(response.UserHandle, ShouldEqual, userHandle)
+					So(response.Entity.FirstName, ShouldEqual, "Alberta")
+					So(response.Addresses, ShouldNotBeEmpty)
+					So(response.Identities, ShouldNotBeEmpty)
+					So(response.Emails, ShouldNotBeEmpty)
+					So(response.Phones, ShouldNotBeEmpty)
+
+					Convey("A call to update registration data should succeed", func() {
+						newAddress := domain.RegistrationAddress{
+							AddressAlias:   "Home",
+							StreetAddress1: "4321 Bogus Ln.",
+							City:           "Los Angeles",
+							State:          "CA",
+							Country:        "US",
+							PostalCode:     "90001",
+						}
+						response, err := silaClient.UpdateRegistrationData(userHandle).
+							SetAddress(response.Addresses[0].Uuid, newAddress).
+							Do(walletPrivateKey)
+						So(err, ShouldBeNil)
+						So(response.Success, ShouldBeTrue)
+						So(response.Status, ShouldEqual, "SUCCESS")
+						So(response.ValidationDetails, ShouldBeNil)
+						So(response.Address.Uuid, ShouldNotBeEmpty)
+						So(response.Address.StreetAddress1, ShouldEqual, newAddress.StreetAddress1)
+						So(response.Address.AddedTime, ShouldNotBeZeroValue)
+						So(response.Address.ModifiedTime, ShouldNotBeZeroValue)
+					})
+
+					Convey("A call to delete registration data should succeed", func() {
+						response, err := silaClient.DeleteRegistrationData(userHandle).
+							SetEmail(response.Emails[0].Uuid).
+							Do(walletPrivateKey)
+						So(err, ShouldBeNil)
+						So(response.Success, ShouldBeTrue)
+						So(response.Status, ShouldEqual, "SUCCESS")
+						So(response.ValidationDetails, ShouldBeNil)
+					})
+
+					Convey("A call to add registration data should succeed", func() {
+						newEmail := "newEmail@gmail.com"
+						response, err := silaClient.AddRegistrationData(userHandle).
+							SetEmail(newEmail).
+							Do(walletPrivateKey)
+						So(err, ShouldBeNil)
+						So(response.Success, ShouldBeTrue)
+						So(response.Status, ShouldEqual, "SUCCESS")
+						So(response.ValidationDetails, ShouldBeNil)
+						So(response.Email.Uuid, ShouldNotBeEmpty)
+						So(response.Email.Email, ShouldEqual, newEmail)
+						So(response.Email.AddedTime, ShouldNotBeZeroValue)
+						So(response.Email.ModifiedTime, ShouldNotBeZeroValue)
+					})
+				})
+
 				Convey("A call to request KYC on the newly registered account should succeed", func() {
 					response, err := silaClient.RequestKyc(userHandle).
 						SetRef("My Reference").
@@ -95,22 +158,6 @@ func TestClient_IndividualEntityRegistration(t *testing.T) {
 						So(response.Reference, ShouldEqual, "My Reference")
 						So(response.EntityType, ShouldEqual, "individual")
 						So(response.VerificationStatus, ShouldEqual, "pending")
-					})
-
-					Convey("A call to get the newly created entity should succeed", func() {
-						response, err := silaClient.GetEntity(userHandle).
-							Do(walletPrivateKey)
-						So(err, ShouldBeNil)
-						So(response.Success, ShouldBeTrue)
-						So(response.Status, ShouldEqual, "SUCCESS")
-						So(response.ValidationDetails, ShouldBeNil)
-						So(response.EntityType, ShouldEqual, "individual")
-						So(response.UserHandle, ShouldEqual, userHandle)
-						So(response.Entity.FirstName, ShouldEqual, "Alberta")
-						So(response.Addresses, ShouldNotBeEmpty)
-						So(response.Identities, ShouldNotBeEmpty)
-						So(response.Emails, ShouldNotBeEmpty)
-						So(response.Phones, ShouldNotBeEmpty)
 					})
 
 					Convey("A call to get entities should succeed", func() {

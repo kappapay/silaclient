@@ -15,37 +15,71 @@ import (
 )
 
 type Client interface {
+	// Determine if a handle is currently on use in the network
 	CheckHandle(userHandle string) CheckHandle
+	// Register an individual or business user to a handle, add basic KYC data, and an initial wallet
 	Register(userOrBusinessHandle string) Register
+	// Request KYC for an individual user
 	RequestKyc(userHandle string) RequestKyc
+	// Check the status of KYC for an individual user
 	CheckKyc(userHandle string) CheckKyc
+	// Gets an information about a user
 	GetEntity(userHandle string) GetEntity
+	// Searches for user information
 	GetEntities() GetEntities
+	// Links an individual user to a business user, indicating the individual is part of that business
 	LinkBusinessMember(userHandle string, businessHandle string) LinkBusinessMember
+	// Unlinks an individual user from a business user, indicating that they are not part of that business
 	UnlinkBusinessMember(userHandle string, businessHandle string) UnlinkBusinessMember
+	// Have a business's admin user certify that the information about a beneficial owner (who has ownership stake in the business) has correct information
 	CertifyBeneficialOwner(adminUserHandle string, businessHandle string) CertifyBeneficialOwner
+	// Have a business's admin user certify that all information about a business has been entered correctly and the business should be allowed to transact on the network
 	CertifyBusiness(adminUserHandle string, businessHandle string) CertifyBusiness
+	// Add registration data to a user after registration
+	AddRegistrationData(userHandle string) AddRegistrationData
+	// Update a user's registration data after registration
+	UpdateRegistrationData(userHandle string) UpdateRegistrationData
+	// Delete a user's registration data after registration
+	DeleteRegistrationData(userHandle string) DeleteRegistrationData
 
+	// Link a bank account to a user, either directly or via Plaid
 	LinkAccount(userHandle string) LinkAccount
+	// Complete same day auth with Plaid
 	PlaidSameDayAuth(userHandle string, accountName string) PlaidSameDayAuth
+	// Get a user's linked accounts
 	GetAccounts(userHandle string) GetAccounts
+	// Get the balances for a user's linked accounts
 	GetAccountBalance(userHandle string, accountName string) GetAccountBalance
 
+	// Register a new wallet to a user
 	RegisterWallet(userHandle string) RegisterWallet
+	// Get a user's wallet
 	GetWallet(userHandle string) GetWallet
+	// Get several of a user's wallets
 	GetWallets(userHandle string) GetWallets
+	// Update information about a user's wallet
 	UpdateWallet(userHandle string) UpdateWallet
+	// Get the current Sila coin balance of a user's wallet
 	GetWalletBalance(walletAddress string) GetSilaBalance
+	// Delete a user's wallet
 	DeleteWallet(userHandle string) DeleteWallet
 
+	// Issue Sila coin to a wallet from a linked bank account
 	IssueSila(userHandle string) IssueSila
+	// Transfer Sila coin from one wallet to another
 	TransferSila(userHandle string) TransferSila
+	// Redeem Sila coin from a user's wallet to a linked bank account
 	RedeemSila(userHandle string) RedeemSila
+	// Get a list of transactions related to a user's wallet
 	GetTransactions(userHandle string) GetTransactions
+	// Cancel a user's transaction if still in progress
 	CancelTransaction(userHandle string, transactionId string) CancelTransactions
 
+	// Get a list of business types
 	GetBusinessTypes() GetBusinessTypes
+	// Get a list of business roles
 	GetBusinessRoles() GetBusinessRoles
+	// Get a list of NAICS categories and their codes
 	GetNaicsCategories() GetNaicsCategories
 }
 
