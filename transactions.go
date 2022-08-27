@@ -8,6 +8,7 @@ type IssueSila interface {
 	SetDescriptor(descriptor string) IssueSila
 	SetBusinessUuid(businessUuid string) IssueSila
 	SetProcessingType(processingType string) IssueSila
+	SetTransactionIdempotencyId(id string) IssueSila
 	Do(userWalletPrivateKey string) (domain.IssueSilaResponse, error)
 }
 type TransferSila interface {

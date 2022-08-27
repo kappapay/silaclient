@@ -12,17 +12,24 @@ func (client ClientImpl) IssueSila(userHandle string) IssueSila {
 }
 
 type IssueSilaMsg struct {
-	Header         *Header `json:"header"`
-	Message        string  `json:"message"`
-	Amount         int64   `json:"amount"`
-	AccountName    string  `json:"account_name"`
-	Descriptor     string  `json:"descriptor,omitempty"`
-	BusinessUuid   string  `json:"business_uuid,omitempty"`
-	ProcessingType string  `json:"processing_type,omitempty"`
+	Header                   *Header `json:"header"`
+	Message                  string  `json:"message"`
+	Amount                   int64   `json:"amount"`
+	AccountName              string  `json:"account_name"`
+	Descriptor               string  `json:"descriptor,omitempty"`
+	BusinessUuid             string  `json:"business_uuid,omitempty"`
+	ProcessingType           string  `json:"processing_type,omitempty"`
+	TransactionIdempotencyId string  `json:"transaction_idempotency_id,omitempty"`
 }
 
 func (msg *IssueSilaMsg) SetRef(ref string) IssueSila {
 	msg.Header.setRef(ref)
+	return msg
+}
+
+// SetTransactionIdempotencyId will set idempotency id
+func (msg *IssueSilaMsg) SetTransactionIdempotencyId(id string) IssueSila {
+	msg.TransactionIdempotencyId = id
 	return msg
 }
 
