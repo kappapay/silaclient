@@ -3,7 +3,7 @@ package sila
 import (
 	"strconv"
 
-	"github.com/bpancost/sila/domain"
+	"github.com/kappapay/silaclient/domain"
 )
 
 func (client ClientImpl) GetEntities() GetEntities {

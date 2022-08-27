@@ -1,4 +1,4 @@
-module github.com/bpancost/sila
+module github.com/kappapay/silaclient
 
 go 1.15
 

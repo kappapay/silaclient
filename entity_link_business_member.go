@@ -1,6 +1,6 @@
 package sila
 
-import "github.com/bpancost/sila/domain"
+import "github.com/kappapay/silaclient/domain"
 
 // Link a business member to the specified business.
 // If the user handle is an admin of the business, a different user handle should be specified to link to the business (use "AsAdmin" methods).

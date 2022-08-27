@@ -1,6 +1,6 @@
 package sila
 
-import "github.com/bpancost/sila/domain"
+import "github.com/kappapay/silaclient/domain"
 
 func (client ClientImpl) CertifyBusiness(adminUserHandle string, businessHandle string) CertifyBusiness {
 	return &CertifyBusinessMsg{

@@ -58,7 +58,7 @@ The current version of this library implements the following endpoints according
 To use the Sila SDK, first import:
 
 ```go
-import "github.com/bpancost/sila"
+import "github.com/kappapay/silaclient"
 ```
 
 From there, create a new client by using
@@ -80,7 +80,7 @@ response, err := silaClient.GetEntities().
                             Do()
 ```
 
-There are several functions within the `github.com/bpancost/sila` package which can be used to manipulate or create keys
+There are several functions within the `github.com/kappapay/silaclient` package which can be used to manipulate or create keys
 for wallets, which will be required for certain calls.
 
 * `GenerateNewPrivateKey() (string, error)`

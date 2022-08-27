@@ -5,7 +5,7 @@ import (
 
 	. "github.com/smartystreets/goconvey/convey"
 
-	"github.com/bpancost/sila"
+	"github.com/kappapay/silaclient"
 )
 
 func TestClient_Parameters(t *testing.T) {

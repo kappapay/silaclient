@@ -1,7 +1,7 @@
 package sila
 
 import (
-	"github.com/bpancost/sila/domain"
+	"github.com/kappapay/silaclient/domain"
 )
 
 // Register the user or business handle on Sila

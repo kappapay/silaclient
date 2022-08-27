@@ -1,6 +1,6 @@
 package sila
 
-import "github.com/bpancost/sila/domain"
+import "github.com/kappapay/silaclient/domain"
 
 type CheckHandle interface {
 	// Sets a reference ID tagging the request which will also be passed back in the response
