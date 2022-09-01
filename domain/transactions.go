@@ -39,6 +39,8 @@ type Transaction struct {
 	DestinationHandle  string                 `json:"destination_handle"`
 	HandleAddress      string                 `json:"handle_address"`
 	Timeline           []TransactionTimePoint `json:"timeline"`
+	ErrorCode          string                 `json:"error_code"`
+	ErrorMsg           string                 `json:"error_msg"`
 }
 
 func (t *Transaction) UnmarshalJSON(data []byte) error {
@@ -114,6 +116,10 @@ func (t *Transaction) UnmarshalJSON(data []byte) error {
 				convertedValue[index] = ttp
 			}
 			t.Timeline = convertedValue
+		case "error_code":
+			t.ErrorCode = value.(string)
+		case "error_msg":
+			t.ErrorMsg = value.(string)
 		}
 
 	}
