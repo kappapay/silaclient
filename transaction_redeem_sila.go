@@ -12,13 +12,14 @@ func (client ClientImpl) RedeemSila(userHandle string) RedeemSila {
 }
 
 type RedeemSilaMsg struct {
-	Header         *Header `json:"header"`
-	Message        string  `json:"message"`
-	Amount         int64   `json:"amount"`
-	AccountName    string  `json:"account_name"`
-	Descriptor     string  `json:"descriptor,omitempty"`
-	BusinessUuid   string  `json:"business_uuid,omitempty"`
-	ProcessingType string  `json:"processing_type,omitempty"`
+	Header                   *Header `json:"header"`
+	Message                  string  `json:"message"`
+	Amount                   int64   `json:"amount"`
+	AccountName              string  `json:"account_name"`
+	Descriptor               string  `json:"descriptor,omitempty"`
+	BusinessUuid             string  `json:"business_uuid,omitempty"`
+	ProcessingType           string  `json:"processing_type,omitempty"`
+	TransactionIdempotencyId string  `json:"transaction_idempotency_id,omitempty"`
 }
 
 func (msg *RedeemSilaMsg) SetRef(ref string) RedeemSila {
@@ -45,6 +46,12 @@ func (msg *RedeemSilaMsg) SetBusinessUuid(businessUuid string) RedeemSila {
 
 func (msg *RedeemSilaMsg) SetProcessingType(processingType string) RedeemSila {
 	msg.ProcessingType = processingType
+	return msg
+}
+
+// SetTransactionIdempotencyId will set idempotency id
+func (msg *RedeemSilaMsg) SetTransactionIdempotencyId(id string) RedeemSila {
+	msg.TransactionIdempotencyId = id
 	return msg
 }
 

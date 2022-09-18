@@ -26,6 +26,7 @@ type RedeemSila interface {
 	SetDescriptor(descriptor string) RedeemSila
 	SetBusinessUuid(businessUuid string) RedeemSila
 	SetProcessingType(processingType string) RedeemSila
+	SetTransactionIdempotencyId(id string) RedeemSila
 	Do(userWalletPrivateKey string) (domain.RedeemSilaResponse, error)
 }
 type GetTransactions interface {
