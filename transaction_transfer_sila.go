@@ -12,14 +12,14 @@ func (client ClientImpl) TransferSila(userHandle string) TransferSila {
 }
 
 type TransferSilaMsg struct {
-	Header             *Header `json:"header"`
-	Message            string  `json:"message"`
-	Amount             int64   `json:"amount"`
-	DestinationHandle  string  `json:"destination_handle"`
-	DestinationWallet  string  `json:"destination_wallet,omitempty"`
-	DestinationAddress string  `json:"destination_address,omitempty"`
-	Descriptor         string  `json:"descriptor,omitempty"`
-	BusinessUuid       string  `json:"business_uuid,omitempty"`
+	Header                   *Header `json:"header"`
+	Message                  string  `json:"message"`
+	Amount                   int64   `json:"amount"`
+	DestinationHandle        string  `json:"destination_handle"`
+	DestinationWallet        string  `json:"destination_wallet,omitempty"`
+	DestinationAddress       string  `json:"destination_address,omitempty"`
+	Descriptor               string  `json:"descriptor,omitempty"`
+	TransactionIdempotencyId string  `json:"transaction_idempotency_id,omitempty"`
 }
 
 func (msg *TransferSilaMsg) SetRef(ref string) TransferSila {
@@ -48,12 +48,12 @@ func (msg *TransferSilaMsg) SetDescriptor(descriptor string) TransferSila {
 	return msg
 }
 
-func (msg *TransferSilaMsg) SetBusinessUuid(businessUuid string) TransferSila {
-	msg.BusinessUuid = businessUuid
+func (msg *TransferSilaMsg) SetTransactionIdempotencyId(id string) TransferSila {
+	msg.TransactionIdempotencyId = id
 	return msg
 }
 
-// The wallet key passed in is what determines the which wallet is the source wallet for the transfer
+// The wallet key passed in is what determines which wallet is the source wallet for the transfer
 func (msg *TransferSilaMsg) Do(userWalletPrivateKey string) (domain.TransferSilaResponse, error) {
 	var responseBody domain.TransferSilaResponse
 	err := instance.performCallWithUserAuth("/transfer_sila", msg, &responseBody, userWalletPrivateKey)

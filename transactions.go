@@ -17,7 +17,7 @@ type TransferSila interface {
 	SetDestinationWallet(destinationWalletName string) TransferSila
 	SetDestinationAddress(destinationWalletAddress string) TransferSila
 	SetDescriptor(descriptor string) TransferSila
-	SetBusinessUuid(businessUuid string) TransferSila
+	SetTransactionIdempotencyId(id string) TransferSila
 	Do(userWalletPrivateKey string) (domain.TransferSilaResponse, error)
 }
 type RedeemSila interface {
