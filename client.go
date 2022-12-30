@@ -5,8 +5,12 @@ import (
 	"crypto/ecdsa"
 	"encoding/hex"
 	"encoding/json"
+	"fmt"
 	"math/big"
+	"mime/multipart"
 	"net/http"
+	"net/textproto"
+	"strings"
 	"sync"
 
 	"github.com/ethereum/go-ethereum/common/hexutil"
@@ -41,6 +45,8 @@ type Client interface {
 	UpdateRegistrationData(userHandle string) UpdateRegistrationData
 	// Delete a user's registration data after registration
 	DeleteRegistrationData(userHandle string) DeleteRegistrationData
+	// Documents begins an upload documents request
+	Documents(userHandle string) DocumentUpload
 
 	// Link a bank account to a user, either directly or via Plaid
 	LinkAccount(userHandle string) LinkAccount
@@ -225,6 +231,81 @@ func (client *ClientImpl) performCallWithUserAuth(path string, requestBody inter
 	}
 	request.Header.Set("usersignature", userSignature)
 	httpClient := http.Client{}
+	resp, err := httpClient.Do(request)
+	if err != nil {
+		return err
+	}
+
+	defer resp.Body.Close()
+
+	err = json.NewDecoder(resp.Body).Decode(&responseBody)
+	if err != nil {
+		return err
+	}
+	return nil
+
+}
+
+var quoteEscaper = strings.NewReplacer("\\", "\\\\", `"`, "\\\"")
+
+func escapeQuotes(s string) string {
+	return quoteEscaper.Replace(s)
+}
+
+// Perform a call to the API at some path signed by a user's wallet private key, with the included request and a pointer to the response struct
+func (client *ClientImpl) performCallMultipartWithUserAuth(path string, files map[string][]byte, payload DocumentUploadData, responseBody interface{}, userWalletPrivateKey string) error {
+
+	body := &bytes.Buffer{}
+	writer := multipart.NewWriter(body)
+	for name, content := range files {
+		h := make(textproto.MIMEHeader)
+		h.Set("Content-Disposition",
+			fmt.Sprintf(`form-data; name="%s"; filename="%s"`,
+				escapeQuotes(name), escapeQuotes(payload.FileMetadata[name].Filename)))
+		h.Set("Content-Type", payload.FileMetadata[name].MimeType)
+		part, err := writer.CreatePart(h)
+		if err != nil {
+			return err
+		}
+
+		part.Write(content)
+	}
+
+	requestJson, err := json.Marshal(payload)
+	if err != nil {
+		return nil
+	}
+
+	payloadWriter, err := writer.CreateFormField("data")
+	if err != nil {
+		return err
+	}
+	payloadWriter.Write(requestJson)
+
+	err = writer.Close()
+	if err != nil {
+		return err
+	}
+
+	url := instance.environment.generateURL(instance.version, path)
+	request, err := http.NewRequest(http.MethodPost, url, body)
+	if err != nil {
+		return err
+	}
+
+	request.Header.Set("Content-Type", writer.FormDataContentType())
+	authSignature, err := instance.generateAuthSignature(requestJson)
+	if err != nil {
+		return errors.Errorf("failed to generate auth signature: %v", err)
+	}
+	request.Header.Set("authsignature", authSignature)
+	userSignature, err := GenerateWalletSignature(requestJson, userWalletPrivateKey)
+	if err != nil {
+		return errors.Errorf("failed to generate user signature: %v", err)
+	}
+	request.Header.Set("usersignature", userSignature)
+	httpClient := http.Client{}
+
 	resp, err := httpClient.Do(request)
 	if err != nil {
 		return err
