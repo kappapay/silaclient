@@ -585,10 +585,10 @@ type ModifyRegistrationDataResponse struct {
 }
 
 type DocumentUploadResponse struct {
-	Success        bool   `json:"success"`
-	Message        string `json:"message"`
-	Status         string `json:"status"`
-	ResponseTimeMs string `json:"response_time_ms"`
-	ReferenceID    string `json:"reference_id"`
-	DocumentID     string `json:"document_id"`
+	Success        bool        `json:"success"`
+	Message        string      `json:"message"`
+	Status         string      `json:"status"`
+	ResponseTimeMs string      `json:"response_time_ms"`
+	ReferenceID    string      `json:"reference_id"`
+	DocumentID     interface{} `json:"document_id"`
 }
