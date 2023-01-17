@@ -75,6 +75,9 @@ func (vh *VerificationHistory) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	for key, value := range raw {
+		if value == nil {
+			continue
+		}
 		switch key {
 		case "verification_id":
 			vh.VerificationId = value.(string)
@@ -248,6 +251,9 @@ func (be *BusinessEntity) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	for key, value := range raw {
+		if value == nil {
+			continue
+		}
 		switch key {
 		case "handle":
 			be.Handle = value.(string)
@@ -312,6 +318,9 @@ func (e *Entity) UnmarshalJSON(data []byte) error {
 		return err
 	}
 	for key, value := range raw {
+		if value == nil {
+			continue
+		}
 		switch key {
 		case "created_epoch":
 			e.CreatedTime = time.Unix(int64(value.(float64)), 0)
