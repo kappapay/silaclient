@@ -39,8 +39,8 @@ type GetAccountBalanceResponse struct {
 	Status              string                 `json:"status"`
 	ValidationDetails   map[string]interface{} `json:"validation_details"`
 	LinkStatus          string                 `json:"link_status"`
-	AvailableBalance    float64                `json:"available_balance"`
-	CurrentBalance      float64                `json:"current_balance"`
+	AvailableBalance    *float64               `json:"available_balance"`
+	CurrentBalance      *float64               `json:"current_balance"`
 	MaskedAccountNumber string                 `json:"masked_account_number"`
 	RoutingNumber       string                 `json:"routing_number"`
 	AccountName         string                 `json:"account_name"`
