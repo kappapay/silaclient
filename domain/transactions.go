@@ -31,6 +31,8 @@ type Transaction struct {
 	CreatedTime        time.Time              `json:"created_epoch"`
 	LastUpdate         string                 `json:"last_update"`
 	LastUpdateTime     time.Time              `json:"last_update_epoch"`
+	Submitted          *string                `json:"submitted"`
+	SubmittedTime      *time.Time             `json:"submitted_epoch"`
 	Descriptor         string                 `json:"descriptor"`
 	DescriptorAch      string                 `json:"descriptor_ach"`
 	AchName            string                 `json:"ach_name"`
@@ -79,6 +81,16 @@ func (t *Transaction) UnmarshalJSON(data []byte) error {
 			t.LastUpdate = value.(string)
 		case "last_update_epoch":
 			t.LastUpdateTime = time.Unix(int64(value.(float64)), 0)
+		case "submitted":
+			if value != nil {
+				submitted := value.(string)
+				t.Submitted = &submitted
+			}
+		case "submitted_epoch":
+			if value != nil {
+				submittedEpoch := time.Unix(int64(value.(float64)), 0)
+				t.SubmittedTime = &submittedEpoch
+			}
 		case "descriptor":
 			t.Descriptor = value.(string)
 		case "descriptor_ach":
