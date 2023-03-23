@@ -31,6 +31,8 @@ type Transaction struct {
 	CreatedTime        time.Time              `json:"created_epoch"`
 	LastUpdate         string                 `json:"last_update"`
 	LastUpdateTime     time.Time              `json:"last_update_epoch"`
+	Submitted          *time.Time             `json:"submitted"`
+	SubmittedTime      *time.Time             `json:"submitted_epoch"`
 	Descriptor         string                 `json:"descriptor"`
 	DescriptorAch      string                 `json:"descriptor_ach"`
 	AchName            string                 `json:"ach_name"`
