@@ -1,0 +1,16 @@
+version: 2
+updates:
+  - package-ecosystem: "gomod"
+    directory: "/"
+    schedule:
+      interval: "weekly"
+    groups:
+      # This is the name of the group, it will be used in PR titles and branch names
+      external-dependencies:
+        patterns:
+          - "*"
+        exclude-patterns:
+          - "github.com/kappapay/*"
+      kappa-dependencies:
+        patterns:
+          - "github.com/kappapay/*"
